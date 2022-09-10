@@ -24,8 +24,6 @@ public partial class PlayerMovement : MonoBehaviour
     [SerializeField] private float m_maxSlideTime;
     [SerializeField] private float m_maxSlideCooldown;
 
-    [SerializeField] private GameObject m_arm;
-
     [Header("Wall Jump")]
     [SerializeField] private float m_wallCheckOffset;
     [SerializeField] private Vector2 m_handSize;
@@ -108,11 +106,16 @@ public partial class PlayerMovement : MonoBehaviour
     {
         m_jumpHeld = false;
 
-        if (m_rigidbody.velocity.y > 0)
+        if (m_remainJumping)
         {
-            m_remainJumping = false;
-            m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, 0);
+
+            if (m_rigidbody.velocity.y > 0)
+            {
+                m_remainJumping = false;
+                m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, 0);
+            }
         }
+        
     }
 
     
@@ -169,7 +172,7 @@ public partial class PlayerMovement : MonoBehaviour
             {
                 m_slideTimer += Time.deltaTime;
             }
-            else if(m_jump && m_movementInput.y < 0)
+            else if (m_jump && m_movementInput.y < 0)
             {
                 m_isSliding = true;
                 m_slideTimer = 0f;
@@ -224,6 +227,7 @@ public partial class PlayerMovement : MonoBehaviour
                 m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, 0);
             }
         }
+        
         m_jump = false;
     }
 
