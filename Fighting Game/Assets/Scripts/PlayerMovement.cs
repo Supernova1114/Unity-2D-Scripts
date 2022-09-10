@@ -176,6 +176,7 @@ public partial class PlayerMovement : MonoBehaviour
             {
                 m_isSliding = true;
                 m_slideTimer = 0f;
+                m_jump = false;
 
                 m_enableHorizontalMovement = false;
             }
@@ -207,11 +208,14 @@ public partial class PlayerMovement : MonoBehaviour
     private void HandleJump()
     {
         // Initial Jump
-        if (m_jump && m_isOnGround && m_movementInput.y >= 0)
+        if (m_jump && m_isOnGround)
         {
-            m_jumpTimer = 0;
-            m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_initialJumpVelocity);
-            m_remainJumping = true;
+            if (m_isSliding || m_movementInput.y >= 0)
+            {
+                m_jumpTimer = 0;
+                m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_initialJumpVelocity);
+                m_remainJumping = true;
+            }
         }
 
         // Remain Jumping

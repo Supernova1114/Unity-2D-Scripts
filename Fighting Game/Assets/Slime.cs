@@ -35,7 +35,7 @@ public class Slime : MonoBehaviour
     {
         while (isAlive)
         {
-            yield return new WaitForSeconds(jumpInterval);
+            yield return new WaitForSeconds(jumpInterval + Random.Range(-0.5f, 0.5f));
 
             if (m_isOnGround)
             {
@@ -53,6 +53,12 @@ public class Slime : MonoBehaviour
 
     private void Update()
     {
+        Animate();
+    }
+
+    
+    private void Animate()
+    {
         if (body.velocity.y > 0)
         {
             float scaleFactor = body.velocity.y / 10f;
@@ -63,8 +69,6 @@ public class Slime : MonoBehaviour
         {
             spriteObj.transform.localScale = Vector3.one;
         }
-        
-        //spriteObj.transform.localPosition = new Vector3(0f, 0.5f * (1 - scale), 0f);
     }
 
 
@@ -81,5 +85,6 @@ public class Slime : MonoBehaviour
             m_isOnGround = false;
         }
     }
+
 
 }
