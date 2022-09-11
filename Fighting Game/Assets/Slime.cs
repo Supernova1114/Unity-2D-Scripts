@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MichaelWolfGames;
 
-public class Slime : MonoBehaviour
+public class Slime : Entity
 {
     [SerializeField] private float jumpForce;
     [SerializeField] private float jumpInterval;
@@ -16,26 +16,28 @@ public class Slime : MonoBehaviour
 
     [SerializeField] private GameObject spriteObj;
 
+    [SerializeField] private float knockbackVelocity;
+
     private Rigidbody2D body;
-    private bool isAlive;
     private bool m_isOnGround;
 
 
     // Start is called before the first frame update
-    void Start()
+    protected override void OnStart()
     {
         body = GetComponent<Rigidbody2D>();
-        isAlive = true;
 
         StartCoroutine(Jumping());
     }
 
-    
+
     IEnumerator Jumping()
     {
-        while (isAlive)
+        while (IsAlive())
         {
             yield return new WaitForSeconds(jumpInterval + Random.Range(-0.5f, 0.5f));
+
+            Hurt(1);
 
             if (m_isOnGround)
             {
@@ -86,5 +88,16 @@ public class Slime : MonoBehaviour
         }
     }
 
+    protected override void OnDeath()
+    {
+        Destroy(gameObject);
+    }
 
+    protected override void OnHurt()
+    {
+    }
+
+    protected override void OnHeal()
+    {
+    }
 }
