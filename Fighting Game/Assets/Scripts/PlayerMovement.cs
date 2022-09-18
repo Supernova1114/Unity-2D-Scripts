@@ -12,6 +12,7 @@ public partial class PlayerMovement : MonoBehaviour
 
     [Header("Jumping")]
     [SerializeField] private float m_maxJumpTime; // Max time the player can jump
+    [SerializeField] private float m_minJumpTime; // Min time the player can jump
     [SerializeField] private float m_initialJumpVelocity; // The initial jump velocity
     [SerializeField] private GameObject m_foot; // The position where the ground check will take place
     [SerializeField] private float m_footRadius; // Radius of the ground check
@@ -46,6 +47,8 @@ public partial class PlayerMovement : MonoBehaviour
     private bool m_isSliding;
     private float m_slideTimer;
     private bool m_enableHorizontalMovement = true;
+
+    private float m_minJumpOffset;
 
     ///-///////////////////////////////////////////////////////////
     ///
@@ -100,6 +103,8 @@ public partial class PlayerMovement : MonoBehaviour
         m_jump = true;
         m_jumpHeld = true;
         m_enableHorizontalMovement = true;
+
+        m_minJumpOffset = 0f;
     }
 
     private void OnJumpCanceled()
@@ -108,11 +113,11 @@ public partial class PlayerMovement : MonoBehaviour
 
         if (m_remainJumping)
         {
-
             if (m_rigidbody.velocity.y > 0)
             {
-                m_remainJumping = false;
-                m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, 0);
+                //m_remainJumping = false;
+                m_minJumpOffset = m_minJumpTime;
+                //m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, 0);
             }
         }
         
@@ -221,9 +226,20 @@ public partial class PlayerMovement : MonoBehaviour
         // Remain Jumping
         if (m_remainJumping)
         {
-            if (m_jumpTimer <= m_maxJumpTime)
+            if (m_jumpTimer <= m_maxJumpTime && m_rigidbody.velocity.y >= 0)
             {
                 m_jumpTimer += Time.fixedDeltaTime;
+
+                //print(m_jumpTimer + " " + m_rigidbody.velocity.y);
+
+                if (m_maxJumpTime > 0)
+                {
+                    float jumpVelFactor = 1 - Mathf.Clamp01((m_jumpTimer / m_maxJumpTime) + m_minJumpOffset);
+
+
+                    m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_rigidbody.velocity.y * jumpVelFactor);
+                }
+
             }
             else
             {

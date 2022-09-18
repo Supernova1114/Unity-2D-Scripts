@@ -37,7 +37,6 @@ public class Slime : Entity
         {
             yield return new WaitForSeconds(jumpInterval + Random.Range(-0.5f, 0.5f));
 
-            Hurt(1);
 
             if (m_isOnGround)
             {
