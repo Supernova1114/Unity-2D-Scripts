@@ -16,18 +16,17 @@ public class Slime : Entity
 
     [SerializeField] private GameObject spriteObj;
 
-    [SerializeField] private float knockbackVelocity;
-
-    private Rigidbody2D body;
+    private Rigidbody2D m_rigidbody;
     private bool m_isOnGround;
 
 
     // Start is called before the first frame update
     protected override void OnStart()
     {
-        body = GetComponent<Rigidbody2D>();
+        m_rigidbody = GetComponent<Rigidbody2D>();
 
         StartCoroutine(Jumping());
+
     }
 
 
@@ -40,13 +39,13 @@ public class Slime : Entity
 
             if (m_isOnGround)
             {
-                float angleDeg = Mathf.Deg2Rad * jumpAngle;
-                float jumpDirection = Mathf.Sign((PlayerMovement.GetInstance().transform.position - transform.position).x);
+                /*float angleDeg = Mathf.Deg2Rad * jumpAngle;
+                float jumpDirection = Mathf.Sign((CharacterController2D.GetInstance().transform.position - transform.position).x);
                 Vector2 jumpVector = jumpForce * new Vector2(jumpDirection * Mathf.Cos(angleDeg), Mathf.Sin(angleDeg));
 
                 Debug.DrawRay(transform.position, jumpVector, Color.red, 1f);
 
-                body.velocity = jumpVector;
+                m_rigidbody.velocity = jumpVector;*/
             }
         }
     }
@@ -60,9 +59,9 @@ public class Slime : Entity
     
     private void Animate()
     {
-        if (body.velocity.y > 0)
+        if (m_rigidbody.velocity.y > 0)
         {
-            float scaleFactor = body.velocity.y / 10f;
+            float scaleFactor = m_rigidbody.velocity.y / 10f;
             spriteObj.transform.localScale = new Vector3(1f - scaleFactor, 1f + scaleFactor, 1f);
             spriteObj.transform.localPosition = new Vector3(0f, scaleFactor / 2f, 0f);
         }

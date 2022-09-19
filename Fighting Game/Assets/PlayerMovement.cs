@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using MichaelWolfGames;
 
-public partial class PlayerMovement : MonoBehaviour
+public partial class PlayerEntity : Entity
 {
-    private static PlayerMovement instance;
 
     [Header("Walking")]
     [SerializeField] private float m_moveSpeed; // Left and Right movement speed of player
@@ -23,7 +23,7 @@ public partial class PlayerMovement : MonoBehaviour
     [SerializeField] private float m_slideSpeed;
     [SerializeField] private float m_slideMovementSmoothing;
     [SerializeField] private float m_maxSlideTime;
-    [SerializeField] private float m_maxSlideCooldown;
+    [SerializeField] private float m_slideCooldown;
 
     [Header("Wall Jump")]
     [SerializeField] private float m_wallCheckOffset;
@@ -32,8 +32,9 @@ public partial class PlayerMovement : MonoBehaviour
     private PlayerInput m_playerInput;
     private InputAction m_moveAction;
     private InputAction m_jumpAction;
+    private InputAction m_slideAction;
 
-    private Rigidbody2D m_rigidbody; // Rigidbody of the player
+    private Rigidbody2D m_rigidbody;
     private Vector2 m_movementInput; // The vertical and horizontal player input.
     private int m_facingDirection = 1; // The direction the player is facing. (-1 left, 1 right)
     private Vector2 m_velocity = Vector2.zero;
@@ -49,6 +50,7 @@ public partial class PlayerMovement : MonoBehaviour
     private bool m_enableHorizontalMovement = true;
 
     private float m_minJumpOffset;
+    private bool m_canBeginSlide = true;
 
     ///-///////////////////////////////////////////////////////////
     ///
@@ -57,17 +59,19 @@ public partial class PlayerMovement : MonoBehaviour
     void Start()
 	{
         instance = this;
-        m_rigidbody = GetComponent<Rigidbody2D>();
         m_playerInput = GetComponent<PlayerInput>();
+        m_rigidbody = GetComponent<Rigidbody2D>();
 
         m_moveAction = m_playerInput.actions.FindAction("Move");
         m_jumpAction = m_playerInput.actions.FindAction("Jump");
+        m_slideAction = m_playerInput.actions.FindAction("Slide");
 
-        m_jumpAction.performed += OnJump;
         m_jumpAction.started += OnJump;
         m_jumpAction.canceled += OnJump;
 
-        m_slideTimer = m_maxSlideCooldown;
+        m_slideAction.started += OnSlide;
+        m_slideAction.canceled += OnSlide;
+
     }
 
     
@@ -78,6 +82,7 @@ public partial class PlayerMovement : MonoBehaviour
     void Update()
     {
         HandlePlayerMovement();
+        //OnAnimate();
     }
 
     private void HandlePlayerMovement()
@@ -95,6 +100,18 @@ public partial class PlayerMovement : MonoBehaviour
         else if (context.canceled)
         {
             OnJumpCanceled();
+        }
+    }
+
+    private void OnSlide(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            OnSlideStarted();
+        }
+        else if (context.canceled)
+        {
+            OnSlideCanceled();
         }
     }
 
@@ -121,6 +138,34 @@ public partial class PlayerMovement : MonoBehaviour
             }
         }
         
+    }
+
+    private void OnSlideStarted()
+    {
+        if (m_canBeginSlide)
+        {
+            m_canBeginSlide = false;
+
+            m_isSliding = true;
+            m_slideTimer = 0f;
+
+            m_jump = false;
+            m_enableHorizontalMovement = false;
+        }
+    }
+
+    private void OnSlideCanceled()
+    {
+        if (m_isSliding)
+        {
+            // Stop sliding
+            m_isSliding = false;
+            m_enableHorizontalMovement = true;
+            m_slideTimer = 0f;
+
+            // Start slide cooldown
+            this.StartTimer(m_slideCooldown, () => m_canBeginSlide = true);
+        }
     }
 
     
@@ -171,22 +216,7 @@ public partial class PlayerMovement : MonoBehaviour
     /// 
     private void HandleSlide()
     {
-        if (!m_isSliding)
-        {
-            if (m_slideTimer < m_maxSlideCooldown)
-            {
-                m_slideTimer += Time.deltaTime;
-            }
-            else if (m_jump && m_movementInput.y < 0)
-            {
-                m_isSliding = true;
-                m_slideTimer = 0f;
-                m_jump = false;
-
-                m_enableHorizontalMovement = false;
-            }
-        }
-        else
+        if (m_isSliding)
         {
             if (m_slideTimer < m_maxSlideTime)
             {
@@ -196,11 +226,10 @@ public partial class PlayerMovement : MonoBehaviour
             }
             else
             {
-                // Stop sliding
-                m_enableHorizontalMovement = true;
-                m_isSliding = false;
-                m_slideTimer = 0f;
+                OnSlideCanceled();
+
             }
+
             m_slideTimer += Time.deltaTime;
         }
     }
@@ -215,12 +244,9 @@ public partial class PlayerMovement : MonoBehaviour
         // Initial Jump
         if (m_jump && m_isOnGround)
         {
-            if (m_isSliding || m_movementInput.y >= 0)
-            {
-                m_jumpTimer = 0;
-                m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_initialJumpVelocity);
-                m_remainJumping = true;
-            }
+            m_jumpTimer = 0;
+            m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_initialJumpVelocity);
+            m_remainJumping = true;
         }
 
         // Remain Jumping
@@ -230,12 +256,9 @@ public partial class PlayerMovement : MonoBehaviour
             {
                 m_jumpTimer += Time.fixedDeltaTime;
 
-                //print(m_jumpTimer + " " + m_rigidbody.velocity.y);
-
                 if (m_maxJumpTime > 0)
                 {
                     float jumpVelFactor = 1 - Mathf.Clamp01((m_jumpTimer / m_maxJumpTime) + m_minJumpOffset);
-
 
                     m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_rigidbody.velocity.y * jumpVelFactor);
                 }
@@ -294,9 +317,6 @@ public partial class PlayerMovement : MonoBehaviour
         return m_velocity;
     }
 
-    public static PlayerMovement GetInstance()
-    {
-        return instance;
-    }
+    
 
 }

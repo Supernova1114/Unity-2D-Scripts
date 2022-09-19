@@ -14,6 +14,11 @@ public abstract class Entity : MonoBehaviour
         OnStart();
     }
 
+    public void Knockback(Vector2 force)
+    {
+
+    }
+
     public void Hurt(int damage)
     {
         if (isAlive)
