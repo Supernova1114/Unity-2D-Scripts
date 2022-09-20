@@ -84,6 +84,7 @@ public partial class PlayerEntity : Entity
     void Update()
     {
         HandlePlayerMovement();
+        HandlePlayerShooting();
         OnAnimate();
     }
 

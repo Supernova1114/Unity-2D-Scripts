@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public abstract class Bullet : MonoBehaviour
 {
     [SerializeField] private int damage;
     [SerializeField] private float speed;
@@ -16,18 +16,29 @@ public class Bullet : MonoBehaviour
         m_rigidbody = GetComponent<Rigidbody2D>();
         m_rigidbody.velocity = transform.right * speed;
 
-        Destroy(gameObject, timeAlive);
+        OnAwake();
+
+        if (timeAlive > 0)
+        {
+            Destroy(gameObject, timeAlive);
+        }
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Entity entity = collision.GetComponent<Entity>();
-        if (entity != null)
+        if (collision.TryGetComponent<Entity>(out var entity))
         {
-            entity.HurtKnockback(damage, (collision.transform.position - transform.position).normalized * knockbackForce);
+            entity.HurtKnockback(damage, (entity.transform.position - transform.position).normalized * knockbackForce);
         }
+
+        OnCollision(collision);
 
         Destroy(gameObject);
     }
+
+    protected abstract void OnAwake();
+    protected abstract void OnCollision(Collider2D collision);
+    
 
 }

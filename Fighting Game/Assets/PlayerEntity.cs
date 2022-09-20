@@ -9,11 +9,12 @@ public partial class PlayerEntity : Entity
 
     [Header("PlayerEntity")]
     [SerializeField] private GameObject playerSpriteObj;
-    [SerializeField] private int attackDamage;
-    [SerializeField] private float knockbackForce;
-    [SerializeField] private Vector2 attackBoxOffset;
-    [SerializeField] private Vector2 attackBoxSize;
+    //[SerializeField] private int attackDamage;
+    //[SerializeField] private float knockbackForce;
+    //[SerializeField] private Vector2 attackBoxOffset;
+    //[SerializeField] private Vector2 attackBoxSize;
 
+    
 
     public static PlayerEntity GetInstance()
     {
@@ -26,9 +27,9 @@ public partial class PlayerEntity : Entity
         playerSpriteObj.transform.rotation = Quaternion.RotateTowards(playerSpriteObj.transform.rotation, targetRotation, 5f);
     }
 
-    public override void Attack()
+    /*public override void Attack()
     {
-        Collider2D[] hitBoxResult = Physics2D.OverlapBoxAll((Vector2)transform.position + new Vector2(attackBoxOffset.x * m_facingDirection, attackBoxOffset.y), attackBoxSize, 0);
+        *//*Collider2D[] hitBoxResult = Physics2D.OverlapBoxAll((Vector2)transform.position + new Vector2(attackBoxOffset.x * m_facingDirection, attackBoxOffset.y), attackBoxSize, 0);
 
         for (int i = 0; i < hitBoxResult.Length; i++)
         {
@@ -37,9 +38,10 @@ public partial class PlayerEntity : Entity
             {
                 entity.HurtKnockback(attackDamage, (entity.transform.position - transform.position).normalized * knockbackForce);
             }
-        }
+        }*//*
+
         
-    }
+    }*/
 
     protected override void OnDeath()
     {
