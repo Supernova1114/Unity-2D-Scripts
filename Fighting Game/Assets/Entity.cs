@@ -2,21 +2,34 @@ using UnityEngine;
 
 public abstract class Entity : MonoBehaviour
 {
+    [Header("Entity")]
     [SerializeField] private int maxHealth;
+    [SerializeField] private bool hasKnockback = true;
     private int health;
 
     private bool isAlive = true;
+    protected Rigidbody2D m_rigidbody;
 
 
-    private void Start()
+    private void Awake()
     {
         health = maxHealth;
-        OnStart();
+        m_rigidbody = GetComponent<Rigidbody2D>();
+        OnAwake();
     }
 
-    public void Knockback(Vector2 force)
+    public void HurtKnockback(int damage, Vector2 addVelocity)
     {
+        Knockback(addVelocity);
+        Hurt(damage);
+    }
 
+    public void Knockback(Vector2 addVelocity)
+    {
+        if (hasKnockback)
+        {
+            m_rigidbody.velocity += addVelocity;
+        }
     }
 
     public void Hurt(int damage)
@@ -66,9 +79,10 @@ public abstract class Entity : MonoBehaviour
         return isAlive;
     }
 
+    public abstract void Attack();
     protected abstract void OnDeath();
     protected abstract void OnHurt();
-    protected abstract void OnStart();
+    protected abstract void OnAwake();
     protected abstract void OnHeal();
 
 }

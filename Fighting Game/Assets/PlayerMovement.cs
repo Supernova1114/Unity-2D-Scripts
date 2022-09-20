@@ -33,8 +33,8 @@ public partial class PlayerEntity : Entity
     private InputAction m_moveAction;
     private InputAction m_jumpAction;
     private InputAction m_slideAction;
+    private InputAction m_attackAction;
 
-    private Rigidbody2D m_rigidbody;
     private Vector2 m_movementInput; // The vertical and horizontal player input.
     private int m_facingDirection = 1; // The direction the player is facing. (-1 left, 1 right)
     private Vector2 m_velocity = Vector2.zero;
@@ -56,15 +56,15 @@ public partial class PlayerEntity : Entity
     ///
     /// Start Method
     /// 
-    void Start()
-	{
+    protected override void OnAwake()
+    {
         instance = this;
         m_playerInput = GetComponent<PlayerInput>();
-        m_rigidbody = GetComponent<Rigidbody2D>();
 
         m_moveAction = m_playerInput.actions.FindAction("Move");
         m_jumpAction = m_playerInput.actions.FindAction("Jump");
         m_slideAction = m_playerInput.actions.FindAction("Slide");
+        m_attackAction = m_playerInput.actions.FindAction("Attack");
 
         m_jumpAction.started += OnJump;
         m_jumpAction.canceled += OnJump;
@@ -72,8 +72,10 @@ public partial class PlayerEntity : Entity
         m_slideAction.started += OnSlide;
         m_slideAction.canceled += OnSlide;
 
-    }
+        m_attackAction.started += OnAttack;
 
+       
+    }
     
 	///-///////////////////////////////////////////////////////////
     ///
@@ -82,7 +84,7 @@ public partial class PlayerEntity : Entity
     void Update()
     {
         HandlePlayerMovement();
-        //OnAnimate();
+        OnAnimate();
     }
 
     private void HandlePlayerMovement()
@@ -112,6 +114,14 @@ public partial class PlayerEntity : Entity
         else if (context.canceled)
         {
             OnSlideCanceled();
+        }
+    }
+
+    private void OnAttack(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            Attack();
         }
     }
 

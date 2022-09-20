@@ -7,7 +7,7 @@ public class Slime : Entity
 {
     [SerializeField] private float jumpForce;
     [SerializeField] private float jumpInterval;
-    [SerializeField] private float jumpAngle;
+    [SerializeField] private int jumpAngle;
 
     [Header("Ground Check")]
     [SerializeField] private GameObject foot;
@@ -16,17 +16,12 @@ public class Slime : Entity
 
     [SerializeField] private GameObject spriteObj;
 
-    private Rigidbody2D m_rigidbody;
     private bool m_isOnGround;
 
 
-    // Start is called before the first frame update
-    protected override void OnStart()
+    protected override void OnAwake()
     {
-        m_rigidbody = GetComponent<Rigidbody2D>();
-
         StartCoroutine(Jumping());
-
     }
 
 
@@ -36,16 +31,15 @@ public class Slime : Entity
         {
             yield return new WaitForSeconds(jumpInterval + Random.Range(-0.5f, 0.5f));
 
-
             if (m_isOnGround)
             {
-                /*float angleDeg = Mathf.Deg2Rad * jumpAngle;
-                float jumpDirection = Mathf.Sign((CharacterController2D.GetInstance().transform.position - transform.position).x);
+                float angleDeg = Mathf.Deg2Rad * jumpAngle;
+                float jumpDirection = Mathf.Sign((PlayerEntity.GetInstance().transform.position - transform.position).x);
                 Vector2 jumpVector = jumpForce * new Vector2(jumpDirection * Mathf.Cos(angleDeg), Mathf.Sin(angleDeg));
 
                 Debug.DrawRay(transform.position, jumpVector, Color.red, 1f);
 
-                m_rigidbody.velocity = jumpVector;*/
+                m_rigidbody.velocity = jumpVector;
             }
         }
     }
@@ -53,17 +47,21 @@ public class Slime : Entity
 
     private void Update()
     {
-        Animate();
+        OnAnimate();
     }
 
-    
-    private void Animate()
+    private void OnAnimate()
     {
         if (m_rigidbody.velocity.y > 0)
         {
             float scaleFactor = m_rigidbody.velocity.y / 10f;
-            spriteObj.transform.localScale = new Vector3(1f - scaleFactor, 1f + scaleFactor, 1f);
-            spriteObj.transform.localPosition = new Vector3(0f, scaleFactor / 2f, 0f);
+
+            if (scaleFactor < 0.8f)
+            {
+                spriteObj.transform.localScale = new Vector3(1f - scaleFactor, 1f + scaleFactor, 1f);
+                spriteObj.transform.localPosition = new Vector3(0f, scaleFactor / 2f, 0f);
+            }
+
         }
         else
         {
@@ -86,6 +84,7 @@ public class Slime : Entity
         }
     }
 
+
     protected override void OnDeath()
     {
         Destroy(gameObject);
@@ -97,5 +96,10 @@ public class Slime : Entity
 
     protected override void OnHeal()
     {
+    }
+
+    public override void Attack()
+    {
+        throw new System.NotImplementedException();
     }
 }
