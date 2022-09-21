@@ -4,12 +4,13 @@ using UnityEngine;
 
 public partial class PlayerEntity : Entity
 {
-    [Header("Shooting")]
-    [SerializeField] private GameObject m_defaultBullet;
-    [SerializeField] private GameObject m_weapon;
+    [Header("WeaponArm")]
+    [SerializeField] private GameObject m_weaponObject;
+    [SerializeField] private GameObject m_arm;
+
+    private Weapon m_currentWeapon;
 
     private float m_shootingRotation;
-    Quaternion m_weaponRotation;
     private Collider2D[] m_bulletOverlapList = new Collider2D[1];
 
     // Sets the input limtis in degrees for the directions to where the player can fire the weapon
@@ -38,7 +39,7 @@ public partial class PlayerEntity : Entity
             ResetShootingRotation();
         }
 
-        m_weaponRotation = Quaternion.AngleAxis(m_shootingRotation, transform.forward);
+        m_arm.transform.rotation = Quaternion.AngleAxis(m_shootingRotation, transform.forward);
     }
 
 
@@ -102,8 +103,13 @@ public partial class PlayerEntity : Entity
         return shootingRot;
     }
 
+    public void AddWeapon(GameObject weaponObject)
+    {
+        
+    }
+
     public override void Attack()
     {
-        Instantiate(m_defaultBullet, transform.position, m_weaponRotation);
+
     }
 }

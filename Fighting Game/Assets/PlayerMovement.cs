@@ -61,6 +61,10 @@ public partial class PlayerEntity : Entity
         instance = this;
         m_playerInput = GetComponent<PlayerInput>();
 
+        //TEMP TEMPTMEPMTEPMTPEMTEEMMP
+        m_currentWeapon = m_weaponObject.GetComponent<Weapon>();
+
+
         m_moveAction = m_playerInput.actions.FindAction("Move");
         m_jumpAction = m_playerInput.actions.FindAction("Jump");
         m_slideAction = m_playerInput.actions.FindAction("Slide");
