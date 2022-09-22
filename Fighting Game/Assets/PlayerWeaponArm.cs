@@ -19,9 +19,12 @@ public partial class PlayerEntity : Entity
     readonly int[] FIRING_ANGLES = {0, 45, 90, 135, 180, 225, 270, 315};
 
 
+    /// <summary>
+    /// Logic for handling rotation of weapon arm.
+    /// </summary>
     private void HandlePlayerShooting()
     {
-        if (GetPlayerInput().sqrMagnitude > 0)
+        if (GetMoveInput().sqrMagnitude > 0)
         {
             float shootRot = GetShootingRotation();
             if (!m_isSliding || shootRot < FIRING_ANGLES[5])
@@ -43,6 +46,9 @@ public partial class PlayerEntity : Entity
     }
 
 
+    /// <summary>
+    /// Reset weapon arm rotation to left or right.
+    /// </summary>
     private void ResetShootingRotation()
     {
         if (m_facingDirection >= 0)
@@ -56,6 +62,10 @@ public partial class PlayerEntity : Entity
     }
 
 
+    /// <summary>
+    /// Logic for getting weapon arm rotation. Rotation limited to 8 angles.
+    /// </summary>
+    /// <returns></returns>
     private float GetShootingRotation()
     {
         float shootingRot = 0;
@@ -103,6 +113,10 @@ public partial class PlayerEntity : Entity
         return shootingRot;
     }
 
+
+    /// <summary>
+    /// Handle Consume Input for current item in hand.
+    /// </summary>
     public override void Consume()
     {
         if (m_currentPickupItem != null)
@@ -111,6 +125,13 @@ public partial class PlayerEntity : Entity
         }
     }
 
+
+    // Logic for item drop and pickup.
+    #region Item Pickup and Drop Logic
+
+    /// <summary>
+    /// Logic for handling item drop and pickup.
+    /// </summary>
     private void TryPickupDropItem()
     {
         Collider2D itemCollider = Physics2D.OverlapBox(transform.position, m_collider.bounds.size, 0, m_pickupItem.value);
@@ -122,6 +143,11 @@ public partial class PlayerEntity : Entity
         }
     }
 
+
+    /// <summary>
+    /// Logic for grabbing an item. Grabs item if hand is empty.
+    /// </summary>
+    /// <param name="item">The item to be grabbed.</param>
     private void GrabItem(PickupItem item)
     {
         if (m_currentPickupItem == null)
@@ -135,6 +161,10 @@ public partial class PlayerEntity : Entity
         }
     }
 
+
+    /// <summary>
+    /// Logic for dropping item. Drops the current item in hand.
+    /// </summary>
     private void DropItem()
     {
         if (m_currentPickupItem != null)
@@ -144,5 +174,6 @@ public partial class PlayerEntity : Entity
             m_currentPickupItem = null;
         }
     }
+    #endregion
 
 }

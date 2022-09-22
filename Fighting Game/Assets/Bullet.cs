@@ -11,6 +11,10 @@ public abstract class Bullet : MonoBehaviour
 
     private Rigidbody2D m_rigidbody;
 
+
+    /// <summary>
+    /// Awake for Bullet
+    /// </summary>
     void Awake()
     {
         m_rigidbody = GetComponent<Rigidbody2D>();
@@ -25,6 +29,11 @@ public abstract class Bullet : MonoBehaviour
 
     }
 
+
+    /// <summary>
+    /// Handle bullet collision.
+    /// </summary>
+    /// <param name="collision">The collider of the object.</param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent<Entity>(out var entity))
@@ -37,6 +46,11 @@ public abstract class Bullet : MonoBehaviour
         Destroy(gameObject);
     }
 
+
+    /// <summary>
+    /// Add velocity to bullet.
+    /// </summary>
+    /// <param name="velocity">The velocity to add.</param>
     public void AddVelocity(Vector2 velocity)
     {
         m_rigidbody.velocity += velocity;

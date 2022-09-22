@@ -19,11 +19,16 @@ public class Drone : Entity
     private Vector2 currentVelocity;
     Vector2 targetDir;
 
+
     protected override void OnAwake()
     {
         StartCoroutine(AttackCoroutine());
     }
 
+    /// <summary>
+    /// Coroutine for attack logic.
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator AttackCoroutine()
     {
         yield return new WaitForSeconds(2);
@@ -34,10 +39,12 @@ public class Drone : Entity
 
             Consume();
         }
-        
-
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
     private void Update()
     {
         float targetAngle = Mathf.LerpAngle(spriteObj.transform.rotation.eulerAngles.z, Mathf.Atan2(targetDir.y, targetDir.x) * Mathf.Rad2Deg, rotationSmooth);

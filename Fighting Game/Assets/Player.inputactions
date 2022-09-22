@@ -78,7 +78,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "PickupDrop",
+                    "name": "ItemPickupDrop",
                     "type": "Button",
                     "id": "d9ebdcc2-2a8a-4d69-a721-ccafbbee05d7",
                     "expectedControlType": "Button",
@@ -403,7 +403,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "PickupDrop",
+                    "action": "ItemPickupDrop",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -35,7 +35,7 @@ public partial class PlayerEntity : Entity
     private InputAction m_slideAction;
     private InputAction m_attackAction;
     private InputAction m_aimLockAction;
-    private InputAction m_pickupDropAction;
+    private InputAction m_itemPickupDropAction;
 
     private Vector2 m_movementInput; // The vertical and horizontal player input.
     private int m_facingDirection = 1; // The direction the player is facing. (-1 left, 1 right)
@@ -53,10 +53,10 @@ public partial class PlayerEntity : Entity
     private float m_minJumpOffset;
     private bool m_canBeginSlide = true;
 
-    ///-///////////////////////////////////////////////////////////
-    ///
-    /// Start Method
-    /// 
+
+    /// <summary>
+    /// OnAwake for PlayerEntity
+    /// </summary>
     protected override void OnAwake()
     {
         instance = this;
@@ -67,7 +67,7 @@ public partial class PlayerEntity : Entity
         m_slideAction = m_playerInput.actions.FindAction("Slide");
         m_attackAction = m_playerInput.actions.FindAction("Attack");
         m_aimLockAction = m_playerInput.actions.FindAction("AimLock");
-        m_pickupDropAction = m_playerInput.actions.FindAction("PickupDrop");
+        m_itemPickupDropAction = m_playerInput.actions.FindAction("ItemPickupDrop");
 
         m_jumpAction.started += OnJump;
         m_jumpAction.canceled += OnJump;
@@ -80,15 +80,13 @@ public partial class PlayerEntity : Entity
         m_aimLockAction.started += OnAimLock;
         m_aimLockAction.canceled += OnAimLock;
 
-        m_pickupDropAction.started += OnPickupDrop;
-
-       
+        m_itemPickupDropAction.started += OnItemPickupDrop;
     }
-    
-	///-///////////////////////////////////////////////////////////
-    ///
-    /// Update Method
-    /// 
+
+
+    /// <summary>
+    /// Update is called every frame.
+    /// </summary>
     void Update()
     {
         HandlePlayerMovement();
@@ -96,12 +94,23 @@ public partial class PlayerEntity : Entity
         OnAnimate();
     }
 
+
+    /// <summary>
+    /// Handle player movement InputAction
+    /// </summary>
     private void HandlePlayerMovement()
     {
         m_movementInput = m_moveAction.ReadValue<Vector2>();
     }
 
 
+    // Handle Jump InputAction
+    #region Jump_Input
+
+    /// <summary>
+    /// OnJump input callback.
+    /// </summary>
+    /// <param name="context">Context of the input action.</param>
     private void OnJump(InputAction.CallbackContext context)
     {
         if (context.started)
@@ -114,6 +123,44 @@ public partial class PlayerEntity : Entity
         }
     }
 
+
+    /// <summary>
+    /// OnJump input pressed.
+    /// </summary>
+    private void OnJumpStarted()
+    {
+        m_jump = true;
+        m_jumpHeld = true;
+
+        m_minJumpOffset = 0f;
+    }
+
+
+    /// <summary>
+    /// OnJump input released.
+    /// </summary>
+    private void OnJumpCanceled()
+    {
+        m_jumpHeld = false;
+
+        if (m_remainJumping)
+        {
+            if (m_rigidbody.velocity.y > 0)
+            {
+                m_minJumpOffset = m_minJumpTime;
+            }
+        }
+
+    }
+    #endregion
+
+    // Handle Slide InputAction
+    #region Slide_Input
+
+    /// <summary>
+    /// OnSlide input callback.
+    /// </summary>
+    /// <param name="context">Context of the input action.</param>
     private void OnSlide(InputAction.CallbackContext context)
     {
         if (context.started)
@@ -126,61 +173,10 @@ public partial class PlayerEntity : Entity
         }
     }
 
-    private void OnAttack(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {
-            Consume();
-        }
-    }
 
-    private void OnAimLock(InputAction.CallbackContext context)
-    {
-        if (!m_isSliding)
-        {
-            if (context.started)
-            {
-                m_enableHorizontalMovement = false;
-            }
-            else if (context.canceled)
-            {
-                m_enableHorizontalMovement = true;
-            }
-        }
-    }
-
-    private void OnPickupDrop(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {
-            TryPickupDropItem();
-        }
-    }
-
-    private void OnJumpStarted()
-    {
-        m_jump = true;
-        m_jumpHeld = true;
-
-        m_minJumpOffset = 0f;
-    }
-
-    private void OnJumpCanceled()
-    {
-        m_jumpHeld = false;
-
-        if (m_remainJumping)
-        {
-            if (m_rigidbody.velocity.y > 0)
-            {
-                //m_remainJumping = false;
-                m_minJumpOffset = m_minJumpTime;
-                //m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, 0);
-            }
-        }
-        
-    }
-
+    /// <summary>
+    /// OnSlide input pressed.
+    /// </summary>
     private void OnSlideStarted()
     {
         if (m_canBeginSlide)
@@ -195,6 +191,10 @@ public partial class PlayerEntity : Entity
         }
     }
 
+
+    /// <summary>
+    /// OnSlide input released.
+    /// </summary>
     private void OnSlideCanceled()
     {
         if (m_isSliding)
@@ -208,12 +208,67 @@ public partial class PlayerEntity : Entity
             this.StartTimer(m_slideCooldown, () => m_canBeginSlide = true);
         }
     }
+    #endregion
 
-    
-    ///-///////////////////////////////////////////////////////////
-    ///
-    /// Fixed-Update Method
-    /// 
+    // Handle Attack InputAction
+    #region Attack_Input
+
+    /// <summary>
+    /// OnAttack input callback.
+    /// </summary>
+    /// <param name="context">Context of the input action.</param>
+    private void OnAttack(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            Consume();
+        }
+    }
+    #endregion
+
+    //Handle Aim Lock InputAction
+    #region AimLock_Input
+
+    /// <summary>
+    /// OnAimLock input callback.
+    /// </summary>
+    /// <param name="context">Context of the input action.</param>
+    private void OnAimLock(InputAction.CallbackContext context)
+    {
+        if (!m_isSliding)
+        {
+            if (context.started)
+            {
+                m_enableHorizontalMovement = false;
+            }
+            else if (context.canceled)
+            {
+                m_enableHorizontalMovement = true;
+            }
+        }
+    }
+    #endregion
+
+    // Handle Item Pickup / Drop InputAction
+    #region ItemPickupDrop_Input
+
+    /// <summary>
+    /// Callback for item pickup and drop input.
+    /// </summary>
+    /// <param name="context">Context of the input action.</param>
+    private void OnItemPickupDrop(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            TryPickupDropItem();
+        }
+    }
+    #endregion
+
+
+    /// <summary>
+    /// Called every fixed framerate frame.
+    /// </summary>
     private void FixedUpdate()
     {
         // Ground Check
@@ -249,10 +304,9 @@ public partial class PlayerEntity : Entity
     }
 
 
-    ///-///////////////////////////////////////////////////////////
-    ///
+    /// <summary>
     /// Logic for handling sliding movement.
-    /// 
+    /// </summary>
     private void HandleSlide()
     {
         if (m_isSliding)
@@ -274,10 +328,9 @@ public partial class PlayerEntity : Entity
     }
 
 
-    ///-///////////////////////////////////////////////////////////
-    ///
-    /// Logic for handling player jumping
-    /// 
+    /// <summary>
+    /// Logic for handling player jumping.
+    /// </summary>
     private void HandleJump()
     {
         // Initial Jump
@@ -314,10 +367,9 @@ public partial class PlayerEntity : Entity
     }
 
 
-    ///-///////////////////////////////////////////////////////////
-    ///
+    /// <summary>
     /// Logic for handling left and right movement.
-    /// 
+    /// </summary>
     private void Move()
     {
         Vector2 targetVelocity;
@@ -346,7 +398,11 @@ public partial class PlayerEntity : Entity
     }
 
 
-    private Vector2 GetPlayerInput()
+    /// <summary>
+    /// Get the player movement input.
+    /// </summary>
+    /// <returns>The current movement input for the player.</returns>
+    private Vector2 GetMoveInput()
     {
         return m_movementInput;
     }

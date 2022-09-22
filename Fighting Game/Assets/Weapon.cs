@@ -14,6 +14,10 @@ public abstract class Weapon : PickupItem
         Attack();
     }
 
+
+    /// <summary>
+    /// Handle weapon attack logic.
+    /// </summary>
     public void Attack()
     {
         if (!cooldown)
@@ -27,8 +31,6 @@ public abstract class Weapon : PickupItem
             }
         }
     }
-
-    
 
     protected abstract void OnAttack();
 }

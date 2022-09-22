@@ -10,12 +10,18 @@ public abstract class RangedWeapon : Weapon
 
     private int currentAmmo;
 
+
     private void Awake()
     {
         currentAmmo = maxAmmo;
         OnAwake();
     }
 
+
+    /// <summary>
+    /// Add ammo to the weapon. Does not add to over max ammo.
+    /// </summary>
+    /// <param name="addAmount">The ammount of ammo to add.</param>
     public void AddAmmo(int addAmount)
     {
         int newAmount = currentAmmo + addAmount;
@@ -30,6 +36,11 @@ public abstract class RangedWeapon : Weapon
         }
     }
 
+
+    /// <summary>
+    /// Handle attack for the weapon.
+    /// Subtracts ammo on attack.
+    /// </summary>
     protected override void OnAttack()
     {
         if (currentAmmo > 0)
