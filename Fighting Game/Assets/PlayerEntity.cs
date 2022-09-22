@@ -27,22 +27,6 @@ public partial class PlayerEntity : Entity
         playerSpriteObj.transform.rotation = Quaternion.RotateTowards(playerSpriteObj.transform.rotation, targetRotation, 5f);
     }
 
-    /*public override void Attack()
-    {
-        *//*Collider2D[] hitBoxResult = Physics2D.OverlapBoxAll((Vector2)transform.position + new Vector2(attackBoxOffset.x * m_facingDirection, attackBoxOffset.y), attackBoxSize, 0);
-
-        for (int i = 0; i < hitBoxResult.Length; i++)
-        {
-            Entity entity = hitBoxResult[i].GetComponent<Entity>();
-            if (entity != null && !entity.CompareTag("Player"))
-            {
-                entity.HurtKnockback(attackDamage, (entity.transform.position - transform.position).normalized * knockbackForce);
-            }
-        }*//*
-
-        
-    }*/
-
     protected override void OnDeath()
     {
     }

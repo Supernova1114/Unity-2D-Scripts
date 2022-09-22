@@ -34,10 +34,11 @@ public partial class PlayerEntity : Entity
     private InputAction m_jumpAction;
     private InputAction m_slideAction;
     private InputAction m_attackAction;
+    private InputAction m_aimLockAction;
+    private InputAction m_pickupDropAction;
 
     private Vector2 m_movementInput; // The vertical and horizontal player input.
     private int m_facingDirection = 1; // The direction the player is facing. (-1 left, 1 right)
-    private Vector2 m_velocity = Vector2.zero;
 
     private Vector2 m_smoothingVelocity = Vector2.zero; // Velocity for smoothing of player movement
     private float m_jumpTimer = 0; // Timer used for holding jump
@@ -61,14 +62,12 @@ public partial class PlayerEntity : Entity
         instance = this;
         m_playerInput = GetComponent<PlayerInput>();
 
-        //TEMP TEMPTMEPMTEPMTPEMTEEMMP
-        m_currentWeapon = m_weaponObject.GetComponent<Weapon>();
-
-
         m_moveAction = m_playerInput.actions.FindAction("Move");
         m_jumpAction = m_playerInput.actions.FindAction("Jump");
         m_slideAction = m_playerInput.actions.FindAction("Slide");
         m_attackAction = m_playerInput.actions.FindAction("Attack");
+        m_aimLockAction = m_playerInput.actions.FindAction("AimLock");
+        m_pickupDropAction = m_playerInput.actions.FindAction("PickupDrop");
 
         m_jumpAction.started += OnJump;
         m_jumpAction.canceled += OnJump;
@@ -77,6 +76,11 @@ public partial class PlayerEntity : Entity
         m_slideAction.canceled += OnSlide;
 
         m_attackAction.started += OnAttack;
+
+        m_aimLockAction.started += OnAimLock;
+        m_aimLockAction.canceled += OnAimLock;
+
+        m_pickupDropAction.started += OnPickupDrop;
 
        
     }
@@ -126,7 +130,30 @@ public partial class PlayerEntity : Entity
     {
         if (context.started)
         {
-            Attack();
+            Consume();
+        }
+    }
+
+    private void OnAimLock(InputAction.CallbackContext context)
+    {
+        if (!m_isSliding)
+        {
+            if (context.started)
+            {
+                m_enableHorizontalMovement = false;
+            }
+            else if (context.canceled)
+            {
+                m_enableHorizontalMovement = true;
+            }
+        }
+    }
+
+    private void OnPickupDrop(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            TryPickupDropItem();
         }
     }
 
@@ -134,7 +161,6 @@ public partial class PlayerEntity : Entity
     {
         m_jump = true;
         m_jumpHeld = true;
-        m_enableHorizontalMovement = true;
 
         m_minJumpOffset = 0f;
     }
@@ -190,8 +216,6 @@ public partial class PlayerEntity : Entity
     /// 
     private void FixedUpdate()
     {
-        m_velocity = m_rigidbody.velocity;
-
         // Ground Check
         Collider2D groundCollider = Physics2D.OverlapCircle(m_foot.transform.position, m_footRadius, m_groundMask.value);
         if (groundCollider)
@@ -326,12 +350,5 @@ public partial class PlayerEntity : Entity
     {
         return m_movementInput;
     }
-
-    public Vector2 GetVelocity()
-    {
-        return m_velocity;
-    }
-
-    
 
 }

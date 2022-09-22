@@ -9,12 +9,14 @@ public abstract class Entity : MonoBehaviour
 
     private bool isAlive = true;
     protected Rigidbody2D m_rigidbody;
+    protected Collider2D m_collider;
 
 
     private void Awake()
     {
         health = maxHealth;
         m_rigidbody = GetComponent<Rigidbody2D>();
+        m_collider = GetComponent<Collider2D>();
         OnAwake();
     }
 
@@ -79,7 +81,12 @@ public abstract class Entity : MonoBehaviour
         return isAlive;
     }
 
-    public abstract void Attack();
+    public Vector2 GetVelocity()
+    {
+        return m_rigidbody.velocity;
+    }
+
+    public abstract void Consume();
     protected abstract void OnDeath();
     protected abstract void OnHurt();
     protected abstract void OnAwake();

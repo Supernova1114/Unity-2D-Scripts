@@ -5,13 +5,13 @@ using UnityEngine;
 public partial class PlayerEntity : Entity
 {
     [Header("WeaponArm")]
-    [SerializeField] private GameObject m_weaponObject;
     [SerializeField] private GameObject m_arm;
+    [SerializeField] private GameObject m_hand;
+    [SerializeField] private LayerMask m_pickupItem;
 
-    private Weapon m_currentWeapon;
+    private PickupItem m_currentPickupItem = null;
 
     private float m_shootingRotation;
-    private Collider2D[] m_bulletOverlapList = new Collider2D[1];
 
     // Sets the input limtis in degrees for the directions to where the player can fire the weapon
     readonly float[] INPUT_ANGLE_LIMITS = {22.5f, 67.5f, 112.5f, 157.5f, 202.5f, 247.5f, 292.5f, 337.5f};
@@ -103,13 +103,46 @@ public partial class PlayerEntity : Entity
         return shootingRot;
     }
 
-    public void AddWeapon(GameObject weaponObject)
+    public override void Consume()
     {
-        
+        if (m_currentPickupItem != null)
+        {
+            m_currentPickupItem.Consume();
+        }
     }
 
-    public override void Attack()
+    private void TryPickupDropItem()
     {
+        Collider2D itemCollider = Physics2D.OverlapBox(transform.position, m_collider.bounds.size, 0, m_pickupItem.value);
 
+        DropItem();
+        if (itemCollider != null)
+        {
+            GrabItem(itemCollider.GetComponent<PickupItem>());
+        }
     }
+
+    private void GrabItem(PickupItem item)
+    {
+        if (m_currentPickupItem == null)
+        {
+            item.Collect(this);
+            item.transform.parent = m_hand.transform;
+            item.transform.localRotation = Quaternion.identity;
+            item.transform.localPosition = Vector3.zero;
+
+            m_currentPickupItem = item;
+        }
+    }
+
+    private void DropItem()
+    {
+        if (m_currentPickupItem != null)
+        {
+            m_currentPickupItem.transform.parent = null;
+            m_currentPickupItem.Drop();
+            m_currentPickupItem = null;
+        }
+    }
+
 }

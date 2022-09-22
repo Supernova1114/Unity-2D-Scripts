@@ -32,7 +32,7 @@ public class Drone : Entity
         {
             yield return new WaitForSeconds(attackInterval);
 
-            Attack();
+            Consume();
         }
         
 
@@ -51,7 +51,7 @@ public class Drone : Entity
         m_rigidbody.velocity = targetPos;
     }
 
-    public override void Attack()
+    public override void Consume()
     {
         Instantiate(bullet, transform.position, spriteObj.transform.rotation);
     }

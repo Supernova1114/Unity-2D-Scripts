@@ -37,6 +37,11 @@ public abstract class Bullet : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public void AddVelocity(Vector2 velocity)
+    {
+        m_rigidbody.velocity += velocity;
+    }
+
     protected abstract void OnAwake();
     protected abstract void OnCollision(Collider2D collision);
     

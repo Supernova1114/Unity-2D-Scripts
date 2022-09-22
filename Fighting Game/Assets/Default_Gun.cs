@@ -9,9 +9,14 @@ public class Default_Gun : RangedWeapon
 
     }
 
+    protected override void OnCollect()
+    {
+        
+    }
+
     protected override void OnOnAttack()
     {
-        Instantiate(bullet, transform.position, transform.rotation);
+        Instantiate(bullet, transform.position, transform.rotation).GetComponent<Bullet>().AddVelocity(new Vector2(GetOwner().GetVelocity().x, 0));
     }
 
     

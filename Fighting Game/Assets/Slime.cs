@@ -98,7 +98,7 @@ public class Slime : Entity
     {
     }
 
-    public override void Attack()
+    public override void Consume()
     {
         throw new System.NotImplementedException();
     }
