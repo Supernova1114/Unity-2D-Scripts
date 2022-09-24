@@ -13,11 +13,11 @@ TagManager:
   - Entity
   - Water
   - UI
-  - EntityHitBox
   - Bullet
+  - PickupItem
+  - CollectibleItem
   - 
-  - ItemHitBox
-  - ItemCollider
+  - 
   - 
   - 
   - 

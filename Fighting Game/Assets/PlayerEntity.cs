@@ -19,9 +19,10 @@ public partial class PlayerEntity : Entity
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("CollectibleItem"))
+        GameObject itemObj = collision.transform.root.gameObject;
+        if (itemObj.CompareTag("CollectibleItem"))
         {
-            collision.GetComponent<CollectibleItem>().Collect(this);
+            itemObj.GetComponent<CollectibleItem>().Collect(this);
         }
     }
 

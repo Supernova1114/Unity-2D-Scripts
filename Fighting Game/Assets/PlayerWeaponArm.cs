@@ -7,7 +7,7 @@ public partial class PlayerEntity : Entity
     [Header("WeaponArm")]
     [SerializeField] private GameObject m_arm;
     [SerializeField] private GameObject m_hand;
-    [SerializeField] private LayerMask m_pickupItem;
+    [SerializeField] private LayerMask m_pickupItemMask;
 
     private PickupItem m_currentPickupItem = null;
 
@@ -134,7 +134,7 @@ public partial class PlayerEntity : Entity
     /// </summary>
     private void TryPickupDropItem()
     {
-        Collider2D itemCollider = Physics2D.OverlapBox(transform.position, m_collider.bounds.size, 0, m_pickupItem.value);
+        Collider2D itemCollider = Physics2D.OverlapBox(transform.position, m_collider.bounds.size, 0, m_pickupItemMask.value);
 
         DropItem();
         if (itemCollider != null)
