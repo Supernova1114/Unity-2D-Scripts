@@ -4,19 +4,15 @@ using UnityEngine;
 
 public class Default_Gun : RangedWeapon
 {
-    protected override void OnAwake()
-    {
-
-    }
-
     protected override void OnCollect()
     {
-        
     }
 
     protected override void OnOnAttack()
     {
-        Instantiate(bullet, transform.position, transform.rotation).GetComponent<Bullet>().AddVelocity(new Vector2(GetOwner().GetVelocity().x, 0));
+        Bullet bulletScript = Instantiate(bullet, transform.position, transform.rotation);
+        bulletScript.SetOwner(GetOwner());
+        bulletScript.AddVelocity(new Vector2(GetOwner().GetVelocity().x, 0));
     }
 
     

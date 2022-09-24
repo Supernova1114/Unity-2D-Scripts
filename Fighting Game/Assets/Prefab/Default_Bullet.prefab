@@ -9,12 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4307532846296432361}
+  - component: {fileID: 5075024091655073193}
   - component: {fileID: 4307532846296432358}
   - component: {fileID: 4307532846296432360}
   - component: {fileID: 4307532846296432363}
-  - component: {fileID: 5075024091655073193}
   m_Layer: 7
-  m_Name: PlayerBullet
+  m_Name: Default_Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,6 +35,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5075024091655073193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4307532846296432359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e9fc1f9d15fea141ae3d38f3205ee75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  speed: 15
+  knockbackForce: 0
+  timeAlive: 4
 --- !u!212 &4307532846296432358
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -124,19 +140,3 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!114 &5075024091655073193
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4307532846296432359}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e9fc1f9d15fea141ae3d38f3205ee75, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 1
-  speed: 15
-  knockbackForce: 0
-  timeAlive: 4

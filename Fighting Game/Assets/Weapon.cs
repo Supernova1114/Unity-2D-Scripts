@@ -5,6 +5,7 @@ using UnityEngine;
 
 public abstract class Weapon : PickupItem
 {
+    [Header("Weapon")]
     [SerializeField] private float attackInterval;
 
     private bool cooldown = false;

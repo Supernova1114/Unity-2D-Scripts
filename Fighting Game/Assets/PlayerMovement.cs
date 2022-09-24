@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using MichaelWolfGames;
+using System.Collections.Generic;
 
 public partial class PlayerEntity : Entity
 {
@@ -14,9 +15,6 @@ public partial class PlayerEntity : Entity
     [SerializeField] private float m_maxJumpTime; // Max time the player can jump
     [SerializeField] private float m_minJumpTime; // Min time the player can jump
     [SerializeField] private float m_initialJumpVelocity; // The initial jump velocity
-    [SerializeField] private GameObject m_foot; // The position where the ground check will take place
-    [SerializeField] private float m_footRadius; // Radius of the ground check
-    [SerializeField] private LayerMask m_groundMask;
     [SerializeField] private float m_fallGravityScale; // Current fall velocity multiplied by a value
 
     [Header("Sliding")]
@@ -91,7 +89,6 @@ public partial class PlayerEntity : Entity
     {
         HandlePlayerMovement();
         HandlePlayerShooting();
-        OnAnimate();
     }
 
 
@@ -221,7 +218,7 @@ public partial class PlayerEntity : Entity
     {
         if (context.started)
         {
-            Consume();
+            Attack();
         }
     }
     #endregion
@@ -271,16 +268,8 @@ public partial class PlayerEntity : Entity
     /// </summary>
     private void FixedUpdate()
     {
-        // Ground Check
-        Collider2D groundCollider = Physics2D.OverlapCircle(m_foot.transform.position, m_footRadius, m_groundMask.value);
-        if (groundCollider)
-        {
-            m_isOnGround = true;
-        }
-        else
-        {
-            m_isOnGround = false;
-        }
+        // Get ground check
+        m_isOnGround = IsOnGround();
 
         // Handle gravity scale for player.
         if (m_rigidbody.velocity.y < 0)
@@ -377,8 +366,10 @@ public partial class PlayerEntity : Entity
 
         if (m_enableHorizontalMovement)
         {
+            float rawXInput = (m_movementInput.x != 0 ? Mathf.Sign(m_movementInput.x) : 0);
+
             // Left and right movement
-            targetVelocity = new Vector2(m_movementInput.x * m_moveSpeed, m_rigidbody.velocity.y);
+            targetVelocity = new Vector2(rawXInput * m_moveSpeed, m_rigidbody.velocity.y);
         }
         else
         {

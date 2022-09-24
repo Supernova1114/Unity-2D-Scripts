@@ -4,8 +4,15 @@ using UnityEngine;
 
 public abstract class PickupItem : MonoBehaviour
 {
+    private Collider2D [] itemColliders;
+
     private Entity ownerEntity;
 
+
+    private void Start()
+    {
+        itemColliders = GetComponentsInChildren<Collider2D> ();
+    }
 
     /// <summary>
     /// Logic for the collection of the item.
@@ -14,7 +21,7 @@ public abstract class PickupItem : MonoBehaviour
     public void Collect(Entity owner)
     {
         ownerEntity = owner;
-        gameObject.GetComponent<Collider2D>().enabled = false;
+        SetPhysics(false);
 
         OnCollect();
     }
@@ -26,7 +33,7 @@ public abstract class PickupItem : MonoBehaviour
     public void Drop()
     {
         ownerEntity = null;
-        gameObject.GetComponent<Collider2D>().enabled = true;
+        SetPhysics(true);
     }
 
 
@@ -46,6 +53,16 @@ public abstract class PickupItem : MonoBehaviour
     public Entity GetOwner()
     {
         return ownerEntity;
+    }
+
+
+    private void SetPhysics(bool b)
+    {
+        itemColliders[0].attachedRigidbody.simulated = b;
+        foreach (Collider2D collider in itemColliders)
+        {
+            collider.enabled = b;
+        }
     }
 
     protected abstract void OnCollect();

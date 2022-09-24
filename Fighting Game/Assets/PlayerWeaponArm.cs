@@ -117,7 +117,7 @@ public partial class PlayerEntity : Entity
     /// <summary>
     /// Handle Consume Input for current item in hand.
     /// </summary>
-    public override void Consume()
+    public override void Attack()
     {
         if (m_currentPickupItem != null)
         {

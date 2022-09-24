@@ -9,11 +9,6 @@ public partial class PlayerEntity : Entity
 
     [Header("PlayerEntity")]
     [SerializeField] private GameObject playerSpriteObj;
-    //[SerializeField] private int attackDamage;
-    //[SerializeField] private float knockbackForce;
-    //[SerializeField] private Vector2 attackBoxOffset;
-    //[SerializeField] private Vector2 attackBoxSize;
-
     
 
     public static PlayerEntity GetInstance()
@@ -21,14 +16,18 @@ public partial class PlayerEntity : Entity
         return instance;
     }
 
-    private void OnAnimate()
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        Quaternion targetRotation = Quaternion.Euler(playerSpriteObj.transform.rotation.x, Mathf.Rad2Deg * Mathf.Acos(m_facingDirection), playerSpriteObj.transform.rotation.z);
-        playerSpriteObj.transform.rotation = Quaternion.RotateTowards(playerSpriteObj.transform.rotation, targetRotation, 5f);
+        if (collision.CompareTag("CollectibleItem"))
+        {
+            collision.GetComponent<CollectibleItem>().Collect(this);
+        }
     }
 
     protected override void OnDeath()
     {
+        print("Bleh");
     }
 
     protected override void OnHeal()

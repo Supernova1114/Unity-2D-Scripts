@@ -11,7 +11,7 @@ public class Drone : Entity
     [SerializeField] private float targetOffset;
     [SerializeField] private Vector2 targetPosOffset;
 
-    [SerializeField] private GameObject bullet;
+    [SerializeField] private Bullet bullet;
     [SerializeField] private float attackInterval;
 
     [SerializeField] private GameObject spriteObj;
@@ -37,13 +37,13 @@ public class Drone : Entity
         {
             yield return new WaitForSeconds(attackInterval);
 
-            Consume();
+            Attack();
         }
     }
 
 
     /// <summary>
-    /// 
+    /// Update function for Drone
     /// </summary>
     private void Update()
     {
@@ -51,16 +51,25 @@ public class Drone : Entity
         spriteObj.transform.rotation = Quaternion.Euler(0, 0, targetAngle);
     }
 
+
+    /// <summary>
+    /// FixedUpdate for Drone
+    /// </summary>
     private void FixedUpdate()
     {
         targetDir = PlayerEntity.GetInstance().transform.position - transform.position;
-        Vector2 targetPos = Vector2.SmoothDamp(m_rigidbody.velocity, targetDir - (targetDir.normalized * targetOffset) + targetPosOffset, ref currentVelocity, movementSmooth);
+        Vector2 targetPos = Vector2.SmoothDamp(m_rigidbody.velocity, (targetDir - (targetDir.normalized * targetOffset) + targetPosOffset) * moveSpeed, ref currentVelocity, movementSmooth);
         m_rigidbody.velocity = targetPos;
     }
 
-    public override void Consume()
+
+    /// <summary>
+    /// Attack logic for drone. Fires a bullet.
+    /// </summary>
+    public override void Attack()
     {
-        Instantiate(bullet, transform.position, spriteObj.transform.rotation);
+        Bullet bulletScript = Instantiate(bullet, transform.position, spriteObj.transform.rotation);
+        bulletScript.SetOwner(this);
     }
 
     protected override void OnDeath()

@@ -5,33 +5,33 @@ using MichaelWolfGames;
 
 public class Slime : Entity
 {
+    [Header("Slime Entity")]
     [SerializeField] private float jumpForce;
     [SerializeField] private float jumpInterval;
     [SerializeField] private int jumpAngle;
-
-    [Header("Ground Check")]
-    [SerializeField] private GameObject foot;
-    [SerializeField] private float footRadius;
-    [SerializeField] private LayerMask groundMask;
-
     [SerializeField] private GameObject spriteObj;
 
-    private bool m_isOnGround;
-
-
+    /// <summary>
+    /// OnAwake for the Slime
+    /// </summary>
     protected override void OnAwake()
     {
         StartCoroutine(Jumping());
     }
 
 
+    /// <summary>
+    /// Coroutine for entity behaviour.
+    /// Jumps at a random interval.
+    /// </summary>
+    /// <returns></returns>
     IEnumerator Jumping()
     {
         while (IsAlive())
         {
             yield return new WaitForSeconds(jumpInterval + Random.Range(-0.5f, 0.5f));
 
-            if (m_isOnGround)
+            if (IsOnGround())
             {
                 float angleDeg = Mathf.Deg2Rad * jumpAngle;
                 float jumpDirection = Mathf.Sign((PlayerEntity.GetInstance().transform.position - transform.position).x);
@@ -45,13 +45,21 @@ public class Slime : Entity
     }
 
 
+    /// <summary>
+    /// Update function.
+    /// </summary>
     private void Update()
     {
         OnAnimate();
     }
 
+
+    /// <summary>
+    /// Dynamic animations for entity.
+    /// </summary>
     private void OnAnimate()
     {
+        // Squash and stretch of sprite.
         if (m_rigidbody.velocity.y > 0)
         {
             float scaleFactor = m_rigidbody.velocity.y / 10f;
@@ -70,18 +78,12 @@ public class Slime : Entity
     }
 
 
+    /// <summary>
+    /// FixedUpdate
+    /// </summary>
     private void FixedUpdate()
     {
-        // Ground Check
-        Collider2D groundCollider = Physics2D.OverlapCircle(foot.transform.position, footRadius, groundMask.value);
-        if (groundCollider)
-        {
-            m_isOnGround = true;
-        }
-        else
-        {
-            m_isOnGround = false;
-        }
+        
     }
 
 
@@ -98,7 +100,7 @@ public class Slime : Entity
     {
     }
 
-    public override void Consume()
+    public override void Attack()
     {
         throw new System.NotImplementedException();
     }

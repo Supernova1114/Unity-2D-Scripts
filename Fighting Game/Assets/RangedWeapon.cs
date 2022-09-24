@@ -6,7 +6,7 @@ using UnityEngine;
 public abstract class RangedWeapon : Weapon
 {
     [SerializeField] private int maxAmmo;
-    [SerializeField] protected GameObject bullet;
+    [SerializeField] protected Bullet bullet;
 
     private int currentAmmo;
 
@@ -14,9 +14,9 @@ public abstract class RangedWeapon : Weapon
     private void Awake()
     {
         currentAmmo = maxAmmo;
-        OnAwake();
     }
 
+    
 
     /// <summary>
     /// Add ammo to the weapon. Does not add to over max ammo.
@@ -50,6 +50,5 @@ public abstract class RangedWeapon : Weapon
         }
     }
 
-    protected abstract void OnAwake();
     protected abstract void OnOnAttack();
 }
