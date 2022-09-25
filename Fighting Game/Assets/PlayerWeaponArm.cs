@@ -7,11 +7,13 @@ public partial class PlayerEntity : Entity
     [Header("WeaponArm")]
     [SerializeField] private GameObject m_arm;
     [SerializeField] private GameObject m_hand;
-    [SerializeField] private LayerMask m_pickupItemMask;
+    [SerializeField] private LayerMask m_itemMask;
 
     private PickupItem m_currentPickupItem = null;
-
     private float m_shootingRotation;
+
+    private ContactFilter2D m_itemContactFilter = new ContactFilter2D();
+    List<Collider2D> itemOverlapList = new List<Collider2D>(); 
 
     // Sets the input limtis in degrees for the directions to where the player can fire the weapon
     readonly float[] INPUT_ANGLE_LIMITS = {22.5f, 67.5f, 112.5f, 157.5f, 202.5f, 247.5f, 292.5f, 337.5f};
@@ -134,13 +136,27 @@ public partial class PlayerEntity : Entity
     /// </summary>
     private void TryPickupDropItem()
     {
-        Collider2D itemCollider = Physics2D.OverlapBox(transform.position, m_collider.bounds.size, 0, m_pickupItemMask.value);
+
+        Physics2D.OverlapBox(transform.position, m_collider.bounds.size, 0, m_itemContactFilter, itemOverlapList);
 
         DropItem();
-        if (itemCollider != null)
+
+        // Find pickup item in list
+        for (int i = 0; i < itemOverlapList.Count; i++)
         {
-            GrabItem(itemCollider.GetComponent<PickupItem>());
+            if (itemOverlapList[i].CompareTag("PickupItem"))
+            {
+                if (itemOverlapList[0] != null)
+                {
+                    GrabItem(itemOverlapList[0].transform.root.GetComponent<PickupItem>());
+                }
+
+                break;
+            }
         }
+
+        itemOverlapList.Clear();
+
     }
 
 
@@ -170,6 +186,7 @@ public partial class PlayerEntity : Entity
         if (m_currentPickupItem != null)
         {
             m_currentPickupItem.transform.parent = null;
+            m_currentPickupItem.transform.position = transform.position;
             m_currentPickupItem.Drop();
             m_currentPickupItem = null;
         }

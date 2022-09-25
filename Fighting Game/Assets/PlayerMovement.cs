@@ -24,8 +24,10 @@ public partial class PlayerEntity : Entity
     [SerializeField] private float m_slideCooldown;
 
     [Header("Wall Jump")]
-    [SerializeField] private float m_wallCheckOffset;
+    [SerializeField] private Vector2 m_wallCheckOffset;
     [SerializeField] private Vector2 m_handSize;
+
+    private Collider2D[] wallContactList = new Collider2D[1]; 
 
     private PlayerInput m_playerInput;
     private InputAction m_moveAction;
@@ -58,6 +60,13 @@ public partial class PlayerEntity : Entity
     protected override void OnAwake()
     {
         instance = this;
+
+        // Set up item contact filter
+        m_itemContactFilter.useLayerMask = true;
+        m_itemContactFilter.layerMask = m_itemMask.value;
+
+
+        // Set up player input
         m_playerInput = GetComponent<PlayerInput>();
 
         m_moveAction = m_playerInput.actions.FindAction("Move");
@@ -289,6 +298,7 @@ public partial class PlayerEntity : Entity
 
         Move();
         HandleSlide();
+        HandleWallClimb();
         HandleJump();
     }
 
@@ -323,11 +333,21 @@ public partial class PlayerEntity : Entity
     private void HandleJump()
     {
         // Initial Jump
-        if (m_jump && m_isOnGround)
+        if (m_jump)
         {
-            m_jumpTimer = 0;
-            m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_initialJumpVelocity);
-            m_remainJumping = true;
+            bool canWallJump = IsOnWall() && !m_isOnGround;
+            if (m_isOnGround || canWallJump)
+            {
+                m_jumpTimer = 0;
+                m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_initialJumpVelocity);
+                m_remainJumping = true;
+
+                if (canWallJump)
+                {
+                    m_rigidbody.velocity += (Vector2)(-m_facingDirection * m_initialJumpVelocity * transform.right);
+                }
+            }
+            
         }
 
         // Remain Jumping
@@ -354,6 +374,15 @@ public partial class PlayerEntity : Entity
         
         m_jump = false;
     }
+
+
+    private void HandleWallClimb()
+    {
+        if (!m_isOnGround && Mathf.Abs(m_movementInput.x) > 0.1f && IsOnWall())
+        {
+            m_rigidbody.velocity = Vector2.zero;
+        }
+    } 
 
 
     /// <summary>
@@ -386,6 +415,17 @@ public partial class PlayerEntity : Entity
         }
         
         m_rigidbody.velocity = Vector2.SmoothDamp(m_rigidbody.velocity, targetVelocity, ref m_smoothingVelocity, moveSmoothing);
+    }
+
+
+    private bool IsOnWall()
+    {
+        // Clear list
+        wallContactList[0] = null;
+
+        // Add check for kinematic or not rigidbody?
+        Physics2D.OverlapBox(transform.position + (m_facingDirection * m_wallCheckOffset.x * transform.right) + (m_wallCheckOffset.y * transform.up), m_handSize, 0, m_groundContactFilter, wallContactList);
+        return wallContactList[0];
     }
 
 

@@ -37,32 +37,19 @@ public abstract class Bullet : MonoBehaviour
     /// <param name="collision">The collider of the object.</param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        bool isCollisionOwner = false; // If the bullet collided with its owner.
-
+        bool isHurtableEntity = collision.transform.root.TryGetComponent<Entity>(out var entity) && ownerEntity != entity && !ownerEntity.IsOnSameTeam(entity);
         // Try to get Entity class from top-most parent.
-        if (collision.transform.root.TryGetComponent<Entity>(out var entity))
+        if (isHurtableEntity)
         {
-            // If collision is not self
-            if (ownerEntity != entity)
-            {
-                // If owner is a different team than entity hit, hurt entity hit.
-                if (ownerEntity.GetTeam() != entity.GetTeam())
-                {
-                    entity.HurtKnockback(damage, (entity.transform.position - transform.position).normalized * knockbackForce);
-                }
-            }
-            else
-            {
-                isCollisionOwner = true;
-            }
-        }
+            entity.HurtKnockback(damage, (entity.transform.position - transform.position).normalized * knockbackForce);
 
-        if (!isCollisionOwner)
+            OnCollision(collision);
+        }
+        else if (!collision.isTrigger)
         {
             OnCollision(collision);
-
-            Destroy(gameObject);
         }
+
     }
 
 

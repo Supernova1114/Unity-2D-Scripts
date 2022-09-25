@@ -6,17 +6,19 @@ public class CoinCollectible : CollectibleItem
 {
     [SerializeField] private GameObject spriteObj;
     [SerializeField] private float spinSpeed;
+    [SerializeField] private int value;
 
     private float spinSpeedOffset;
+
+
+    void Awake()
+    {
+        spinSpeedOffset = spinSpeed * spinSpeed;
+    }
 
     protected override void OnCollect()
     {
         Destroy(gameObject);
-    }
-
-    void Start()
-    {
-        spinSpeedOffset = spinSpeed * spinSpeed;
     }
 
     // Update is called once per frame

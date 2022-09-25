@@ -10,6 +10,8 @@ public class Slime : Entity
     [SerializeField] private float jumpInterval;
     [SerializeField] private int jumpAngle;
     [SerializeField] private GameObject spriteObj;
+    [SerializeField] private int attackDamage;
+    [SerializeField] private float knockbackForce;
 
     /// <summary>
     /// OnAwake for the Slime
@@ -53,6 +55,20 @@ public class Slime : Entity
         OnAnimate();
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        // Try to get Entity class from top-most parent.
+        if (collision.transform.root.TryGetComponent<Entity>(out var entity))
+        {
+            // If owner is a different team than entity hit, hurt entity hit.
+            if (!IsOnSameTeam(entity))
+            {
+                // knockback left or right
+                float knockbackDir = Mathf.Sign((entity.transform.position - transform.position).x);
+                entity.HurtKnockback(attackDamage, Vector2.right * knockbackDir * knockbackForce);
+            }
+        }
+    }
 
     /// <summary>
     /// Dynamic animations for entity.
@@ -102,6 +118,6 @@ public class Slime : Entity
 
     public override void Attack()
     {
-        throw new System.NotImplementedException();
+
     }
 }

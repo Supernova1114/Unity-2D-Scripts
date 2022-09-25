@@ -14,8 +14,8 @@ TagManager:
   - Water
   - UI
   - Bullet
-  - PickupItem
-  - CollectibleItem
+  - Item
+  - IgnoreBullet
   - 
   - 
   - 

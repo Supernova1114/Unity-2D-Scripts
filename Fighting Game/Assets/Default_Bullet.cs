@@ -12,7 +12,7 @@ public class Default_Bullet : Bullet
     
     protected override void OnCollision(Collider2D collision)
     {
-        
+            Destroy(gameObject);
     }
 
 }
