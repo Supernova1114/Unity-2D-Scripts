@@ -378,7 +378,7 @@ public partial class PlayerEntity : Entity
 
     private void HandleWallClimb()
     {
-        if (!m_isOnGround && Mathf.Abs(m_movementInput.x) > 0.1f && IsOnWall())
+        if (!m_isOnGround && Mathf.Abs(m_movementInput.x) > 0 && IsOnWall())
         {
             m_rigidbody.velocity = Vector2.zero;
         }

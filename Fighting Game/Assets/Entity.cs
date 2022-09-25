@@ -1,3 +1,4 @@
+using MichaelWolfGames;
 using UnityEngine;
 
 public abstract class Entity : MonoBehaviour
@@ -6,6 +7,8 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] private int teamNumber;
     [SerializeField] private int maxHealth;
     [SerializeField] private bool hasKnockback = true;
+    [SerializeField] private float invincibilityFrameTime;
+
     [Header("Ground Check")]
     [SerializeField] private GameObject foot;
     [SerializeField] private float m_footRadius; // Radius of the ground check
@@ -18,6 +21,7 @@ public abstract class Entity : MonoBehaviour
     private int health;
 
     private bool isAlive = true;
+    private bool isInvincible = false;
     protected Rigidbody2D m_rigidbody;
     protected Collider2D m_collider;
 
@@ -43,8 +47,17 @@ public abstract class Entity : MonoBehaviour
     /// <param name="addVelocity">The knockback velocity to apply to entity.</param>
     public void HurtKnockback(int damage, Vector2 addVelocity)
     {
-        Knockback(addVelocity);
-        Hurt(damage);
+        if (!isInvincible)
+        {
+            if (invincibilityFrameTime > 0)
+            {
+                isInvincible = true;
+                this.StartTimer(invincibilityFrameTime, () => isInvincible = false);
+            }
+
+            Knockback(addVelocity);
+            Hurt(damage);
+        }
     }
 
 
@@ -65,7 +78,7 @@ public abstract class Entity : MonoBehaviour
     /// Apply damage to entity.
     /// </summary>
     /// <param name="damage">The amount of damage to apply.</param>
-    public void Hurt(int damage)
+    private void Hurt(int damage)
     {
         if (isAlive)
         {
