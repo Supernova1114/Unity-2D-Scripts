@@ -4,14 +4,13 @@ using UnityEngine;
 
 public abstract class PickupItem : MonoBehaviour
 {
-    private Collider2D [] itemColliders;
-
+    private Collider2D itemCollider;
     private Entity ownerEntity;
 
 
     private void Start()
     {
-        itemColliders = GetComponentsInChildren<Collider2D> ();
+        itemCollider = GetComponent<Collider2D>();
     }
 
     /// <summary>
@@ -20,10 +19,13 @@ public abstract class PickupItem : MonoBehaviour
     /// <param name="owner">The new owner of the item.</param>
     public void Collect(Entity owner)
     {
-        ownerEntity = owner;
-        SetPhysics(false);
+        if (ownerEntity == null)
+        {
+            ownerEntity = owner;
+            SetPhysics(false);
 
-        OnCollect();
+            OnCollect();
+        }
     }
 
 
@@ -58,11 +60,8 @@ public abstract class PickupItem : MonoBehaviour
 
     private void SetPhysics(bool b)
     {
-        itemColliders[0].attachedRigidbody.simulated = b;
-        foreach (Collider2D collider in itemColliders)
-        {
-            collider.enabled = b;
-        }
+        itemCollider.attachedRigidbody.simulated = b;
+        itemCollider.enabled = b;
     }
 
     protected abstract void OnCollect();

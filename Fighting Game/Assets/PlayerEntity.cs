@@ -9,7 +9,7 @@ public partial class PlayerEntity : Entity
 
     [Header("PlayerEntity")]
     [SerializeField] private GameObject playerSpriteObj;
-    
+    private PlayerEntityNetcode playerEntityNetcode;
 
     public static PlayerEntity GetInstance()
     {

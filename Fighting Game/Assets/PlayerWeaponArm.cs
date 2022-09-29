@@ -134,7 +134,7 @@ public partial class PlayerEntity : Entity
     /// <summary>
     /// Logic for handling item drop and pickup.
     /// </summary>
-    private void TryPickupDropItem()
+    public void TryPickupDropItem()
     {
 
         Physics2D.OverlapBox(transform.position, m_collider.bounds.size, 0, m_itemContactFilter, itemOverlapList);
@@ -164,7 +164,7 @@ public partial class PlayerEntity : Entity
     /// Logic for grabbing an item. Grabs item if hand is empty.
     /// </summary>
     /// <param name="item">The item to be grabbed.</param>
-    private void GrabItem(PickupItem item)
+    public void GrabItem(PickupItem item)
     {
         if (m_currentPickupItem == null)
         {

@@ -61,6 +61,8 @@ public partial class PlayerEntity : Entity
     {
         instance = this;
 
+        playerEntityNetcode = GetComponent<PlayerEntityNetcode>();
+
         // Set up item contact filter
         m_itemContactFilter.useLayerMask = true;
         m_itemContactFilter.layerMask = m_itemMask.value;
@@ -266,7 +268,7 @@ public partial class PlayerEntity : Entity
     {
         if (context.started)
         {
-            TryPickupDropItem();
+            playerEntityNetcode.TryPickupDropItemServerRpc();
         }
     }
     #endregion
