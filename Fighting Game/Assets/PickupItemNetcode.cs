@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
+using Unity.Netcode.Components;
+
 public class PickupItemNetcode : NetworkBehaviour
 {
     private PickupItem pickupItem;
 
+    
 
     public override void OnNetworkSpawn()
     {

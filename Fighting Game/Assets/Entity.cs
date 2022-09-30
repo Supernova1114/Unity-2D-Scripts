@@ -1,7 +1,8 @@
 using MichaelWolfGames;
 using UnityEngine;
+using Unity.Netcode;
 
-public abstract class Entity : MonoBehaviour
+public abstract class Entity : NetworkBehaviour
 {
     [Header("Entity")]
     [SerializeField] private int teamNumber;
@@ -27,9 +28,9 @@ public abstract class Entity : MonoBehaviour
 
 
     /// <summary>
-    /// Awake function for Entity;
+    /// OnNetworkSpawn for Entity
     /// </summary>
-    private void Awake()
+    public override void OnNetworkSpawn()
     {
         health = maxHealth;
         m_rigidbody = GetComponent<Rigidbody2D>();
@@ -37,6 +38,8 @@ public abstract class Entity : MonoBehaviour
 
         InitGroundContactFilter();
         OnAwake();
+        
+        base.OnNetworkSpawn();
     }
 
 

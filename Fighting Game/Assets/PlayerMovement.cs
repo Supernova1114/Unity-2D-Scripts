@@ -59,10 +59,13 @@ public partial class PlayerEntity : Entity
     /// </summary>
     protected override void OnAwake()
     {
-        instance = this;
 
-        playerEntityNetcode = GetComponent<PlayerEntityNetcode>();
-
+        // Do not assign player input if this is not the owner.
+        if (!IsOwner)
+        {
+            return;
+        }
+        
         // Set up item contact filter
         m_itemContactFilter.useLayerMask = true;
         m_itemContactFilter.layerMask = m_itemMask.value;
@@ -98,6 +101,8 @@ public partial class PlayerEntity : Entity
     /// </summary>
     void Update()
     {
+        if (!IsOwner) return;
+        
         HandlePlayerMovement();
         HandlePlayerShooting();
     }
@@ -268,7 +273,7 @@ public partial class PlayerEntity : Entity
     {
         if (context.started)
         {
-            playerEntityNetcode.TryPickupDropItemServerRpc();
+            TryPickupDropItemServerRpc();
         }
     }
     #endregion
@@ -279,6 +284,9 @@ public partial class PlayerEntity : Entity
     /// </summary>
     private void FixedUpdate()
     {
+        // Do nut run if is not owner.
+        if (!IsOwner) return;
+
         // Get ground check
         m_isOnGround = IsOnGround();
 

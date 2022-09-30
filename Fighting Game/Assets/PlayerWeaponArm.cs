@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public partial class PlayerEntity : Entity
@@ -119,11 +120,12 @@ public partial class PlayerEntity : Entity
     /// <summary>
     /// Handle Consume Input for current item in hand.
     /// </summary>
+    ///
     public override void Attack()
     {
         if (m_currentPickupItem != null)
         {
-            m_currentPickupItem.Consume();
+            m_currentPickupItem.ConsumeServerRpc();
         }
     }
 
@@ -134,7 +136,8 @@ public partial class PlayerEntity : Entity
     /// <summary>
     /// Logic for handling item drop and pickup.
     /// </summary>
-    public void TryPickupDropItem()
+    [ServerRpc]
+    public void TryPickupDropItemServerRpc()
     {
 
         Physics2D.OverlapBox(transform.position, m_collider.bounds.size, 0, m_itemContactFilter, itemOverlapList);
@@ -148,7 +151,7 @@ public partial class PlayerEntity : Entity
             {
                 if (itemOverlapList[0] != null)
                 {
-                    GrabItem(itemOverlapList[0].transform.root.GetComponent<PickupItem>());
+                    GrabItem();
                 }
 
                 break;
@@ -164,12 +167,14 @@ public partial class PlayerEntity : Entity
     /// Logic for grabbing an item. Grabs item if hand is empty.
     /// </summary>
     /// <param name="item">The item to be grabbed.</param>
-    public void GrabItem(PickupItem item)
+    private void GrabItem()
     {
         if (m_currentPickupItem == null)
         {
+            PickupItem item = itemOverlapList[0].transform.root.GetComponent<PickupItem>();
+
             item.Collect(this);
-            item.transform.parent = m_hand.transform;
+            item.transform.parent = transform;
             item.transform.localRotation = Quaternion.identity;
             item.transform.localPosition = Vector3.zero;
 

@@ -4,19 +4,10 @@ using UnityEngine;
 
 public partial class PlayerEntity : Entity
 {
-
-    private static PlayerEntity instance;
-
     [Header("PlayerEntity")]
     [SerializeField] private GameObject playerSpriteObj;
-    private PlayerEntityNetcode playerEntityNetcode;
 
-    public static PlayerEntity GetInstance()
-    {
-        return instance;
-    }
-
-
+    
     private void OnTriggerEnter2D(Collider2D collision)
     {
         GameObject itemObj = collision.transform.root.gameObject;

@@ -1348,6 +1348,11 @@ MonoBehaviour:
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 2947924778190324892, guid: 5625fdb2a38f39c40ab7c6b8a5ad5c1d, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
     TickRate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 0
@@ -1622,77 +1627,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!1 &2084593629 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2947924778190324892, guid: 5625fdb2a38f39c40ab7c6b8a5ad5c1d, type: 3}
-  m_PrefabInstance: {fileID: 2947924779609288990}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2084593634
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2084593629}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2453372054
-  AlwaysReplicateAsRoot: 0
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
---- !u!114 &2084593641
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2084593629}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80d7c879794dfda4687da0e400131852, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2084593642
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2084593629}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  InLocalSpace: 0
-  Interpolate: 1
---- !u!114 &2084593643
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2084593629}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26e3bd123804e504d82ee8c4bc0c7708, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &18240840214174462
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1814,6 +1748,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2084593634, guid: 5625fdb2a38f39c40ab7c6b8a5ad5c1d, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2277473220
+      objectReference: {fileID: 0}
+    - target: {fileID: 1888537407309281567, guid: 5625fdb2a38f39c40ab7c6b8a5ad5c1d, type: 3}
+      propertyPath: SyncScaleX
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2947924778190324890, guid: 5625fdb2a38f39c40ab7c6b8a5ad5c1d, type: 3}
       propertyPath: m_RootOrder
       value: 10
@@ -1862,7 +1804,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: Default_Gun
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 7225427097938443285, guid: 5625fdb2a38f39c40ab7c6b8a5ad5c1d, type: 3}
+      propertyPath: Interpolate
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 2084593643, guid: 5625fdb2a38f39c40ab7c6b8a5ad5c1d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5625fdb2a38f39c40ab7c6b8a5ad5c1d, type: 3}
 --- !u!1001 &7331208579302987634
 PrefabInstance:

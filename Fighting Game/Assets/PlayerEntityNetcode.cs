@@ -17,7 +17,7 @@ public class PlayerEntityNetcode : NetworkBehaviour
     [ServerRpc]
     public void TryPickupDropItemServerRpc()
     {
-        playerEntity.TryPickupDropItem();
+        playerEntity.TryPickupDropItemServerRpc();
     }
 
     // Start is called before the first frame update

@@ -11,11 +11,10 @@ public abstract class RangedWeapon : Weapon
     private int currentAmmo;
 
 
-    private void Awake()
+    protected override void OnAwake()
     {
         currentAmmo = maxAmmo;
     }
-
     
 
     /// <summary>

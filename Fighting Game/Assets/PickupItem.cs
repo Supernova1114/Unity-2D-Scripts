@@ -1,17 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public abstract class PickupItem : MonoBehaviour
+public abstract class PickupItem : NetworkBehaviour
 {
     private Collider2D itemCollider;
     private Entity ownerEntity;
 
-
-    private void Start()
+    
+    public override void OnNetworkSpawn()
     {
         itemCollider = GetComponent<Collider2D>();
+
+        OnAwake();
+        base.OnNetworkSpawn();
     }
+    
 
     /// <summary>
     /// Logic for the collection of the item.
@@ -42,7 +47,8 @@ public abstract class PickupItem : MonoBehaviour
     /// <summary>
     /// Logic for the Consume / Attack input for the item. 
     /// </summary>
-    public void Consume()
+    [ServerRpc]
+    public void ConsumeServerRpc()
     {
         OnConsume();
     }
@@ -66,4 +72,5 @@ public abstract class PickupItem : MonoBehaviour
 
     protected abstract void OnCollect();
     protected abstract void OnConsume();
+    protected abstract void OnAwake();
 }
