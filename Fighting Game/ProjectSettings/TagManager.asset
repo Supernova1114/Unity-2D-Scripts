@@ -43,3 +43,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: PickupItem
+    uniqueID: 3401600001
+    locked: 0

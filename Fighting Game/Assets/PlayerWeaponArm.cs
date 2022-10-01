@@ -5,10 +5,15 @@ using UnityEngine;
 
 public partial class PlayerEntity : Entity
 {
+    NetworkVariable<int> nw_ = new NetworkVariable<int>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
     [Header("WeaponArm")]
     [SerializeField] private GameObject m_arm;
     [SerializeField] private GameObject m_hand;
     [SerializeField] private LayerMask m_itemMask;
+    [SerializeField] private float m_handOffset;
+
+    private Vector2 m_handPosition = Vector2.zero;
 
     private PickupItem m_currentPickupItem = null;
     private float m_shootingRotation;
@@ -45,9 +50,21 @@ public partial class PlayerEntity : Entity
             ResetShootingRotation();
         }
 
-        m_arm.transform.rotation = Quaternion.AngleAxis(m_shootingRotation, transform.forward);
+        m_handPosition = new Vector2(m_handOffset * Mathf.Cos(Mathf.Deg2Rad * m_shootingRotation), m_handOffset * Mathf.Sin(Mathf.Deg2Rad * m_shootingRotation));
+
+        SetHandPositionServerRpc(m_handPosition, m_shootingRotation);
     }
 
+
+    [ServerRpc]
+    private void SetHandPositionServerRpc(Vector2 handLocalPos, float handRotation)
+    {
+        if (m_currentPickupItem)
+        {
+            m_currentPickupItem.transform.localPosition = handLocalPos;
+            m_currentPickupItem.transform.localRotation = Quaternion.Euler(0, 0, handRotation);
+        }
+    }
 
     /// <summary>
     /// Reset weapon arm rotation to left or right.
@@ -123,9 +140,15 @@ public partial class PlayerEntity : Entity
     ///
     public override void Attack()
     {
+        AttackServerRpc();
+    }
+
+    [ServerRpc]
+    private void AttackServerRpc()
+    {
         if (m_currentPickupItem != null)
         {
-            m_currentPickupItem.ConsumeServerRpc();
+            m_currentPickupItem.Consume();
         }
     }
 
@@ -178,6 +201,7 @@ public partial class PlayerEntity : Entity
             item.transform.localRotation = Quaternion.identity;
             item.transform.localPosition = Vector3.zero;
 
+            print("Grabbing item");
             m_currentPickupItem = item;
         }
     }

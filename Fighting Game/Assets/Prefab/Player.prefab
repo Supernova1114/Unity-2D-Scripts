@@ -307,6 +307,7 @@ MonoBehaviour:
   m_itemMask:
     serializedVersion: 2
     m_Bits: 128
+  m_handOffset: 1
 --- !u!114 &1456609031770488488
 MonoBehaviour:
   m_ObjectHideFlags: 0

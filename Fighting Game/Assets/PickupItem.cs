@@ -47,8 +47,7 @@ public abstract class PickupItem : NetworkBehaviour
     /// <summary>
     /// Logic for the Consume / Attack input for the item. 
     /// </summary>
-    [ServerRpc]
-    public void ConsumeServerRpc()
+    public void Consume()
     {
         OnConsume();
     }

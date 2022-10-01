@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2947924778190324890}
   - component: {fileID: 2947924778190324888}
-  - component: {fileID: 2084593643}
   - component: {fileID: 2947924778190324891}
   - component: {fileID: 2947924778190324889}
   - component: {fileID: 2084593634}
@@ -54,18 +53,6 @@ MonoBehaviour:
   attackInterval: 0.1
   maxAmmo: 100
   bullet: {fileID: 5075024091655073193, guid: 01c1d9d78de14ab4994175b5eda4a328, type: 3}
---- !u!114 &2084593643
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2947924778190324892}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26e3bd123804e504d82ee8c4bc0c7708, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!61 &2947924778190324891
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -154,7 +141,7 @@ MonoBehaviour:
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
   InLocalSpace: 1
-  Interpolate: 1
+  Interpolate: 0
 --- !u!114 &209731586656862436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,8 +224,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -893367295
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 1}

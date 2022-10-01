@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using MichaelWolfGames;
 using System.Collections.Generic;
+using Unity.Netcode;
 
 public partial class PlayerEntity : Entity
 {
@@ -304,6 +305,7 @@ public partial class PlayerEntity : Entity
         if (!m_isSliding && Mathf.Abs(m_movementInput.x) > 0)
         {
             m_facingDirection = (int)Mathf.Sign(m_movementInput.x);
+
         }
 
         Move();
