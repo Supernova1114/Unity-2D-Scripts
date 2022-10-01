@@ -1,20 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
 
-public abstract class PickupItem : NetworkBehaviour
+public abstract class PickupItem : MonoBehaviour
 {
     private Collider2D itemCollider;
     private Entity ownerEntity;
 
-    
-    public override void OnNetworkSpawn()
+
+    private void Awake()
     {
         itemCollider = GetComponent<Collider2D>();
 
         OnAwake();
-        base.OnNetworkSpawn();
     }
     
 

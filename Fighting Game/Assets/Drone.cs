@@ -57,9 +57,9 @@ public class Drone : Entity
     /// </summary>
     private void FixedUpdate()
     {
-        /*targetDir = PlayerEntity.GetInstance().transform.position - transform.position;
+        targetDir = PlayerEntity.GetInstance().transform.position - transform.position;
         Vector2 targetPos = Vector2.SmoothDamp(m_rigidbody.velocity, (targetDir - (targetDir.normalized * targetOffset) + targetPosOffset) * moveSpeed, ref currentVelocity, movementSmooth);
-        m_rigidbody.velocity = targetPos;*/
+        m_rigidbody.velocity = targetPos;
     }
 
 

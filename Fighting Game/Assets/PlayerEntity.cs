@@ -4,6 +4,8 @@ using UnityEngine;
 
 public partial class PlayerEntity : Entity
 {
+    private static PlayerEntity instance;
+
     [Header("PlayerEntity")]
     [SerializeField] private GameObject playerSpriteObj;
 
@@ -30,6 +32,10 @@ public partial class PlayerEntity : Entity
     {
     }
 
-    
+    public static PlayerEntity GetInstance()
+    {
+        return instance;
+    }
+
 
 }

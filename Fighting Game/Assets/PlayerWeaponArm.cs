@@ -1,12 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
 
 public partial class PlayerEntity : Entity
 {
-    NetworkVariable<int> nw_ = new NetworkVariable<int>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-
     [Header("WeaponArm")]
     [SerializeField] private GameObject m_arm;
     [SerializeField] private GameObject m_hand;
@@ -50,21 +47,10 @@ public partial class PlayerEntity : Entity
             ResetShootingRotation();
         }
 
-        m_handPosition = new Vector2(m_handOffset * Mathf.Cos(Mathf.Deg2Rad * m_shootingRotation), m_handOffset * Mathf.Sin(Mathf.Deg2Rad * m_shootingRotation));
+        m_arm.transform.rotation = Quaternion.AngleAxis(m_shootingRotation, transform.forward);
 
-        SetHandPositionServerRpc(m_handPosition, m_shootingRotation);
     }
 
-
-    [ServerRpc]
-    private void SetHandPositionServerRpc(Vector2 handLocalPos, float handRotation)
-    {
-        if (m_currentPickupItem)
-        {
-            m_currentPickupItem.transform.localPosition = handLocalPos;
-            m_currentPickupItem.transform.localRotation = Quaternion.Euler(0, 0, handRotation);
-        }
-    }
 
     /// <summary>
     /// Reset weapon arm rotation to left or right.
@@ -140,12 +126,6 @@ public partial class PlayerEntity : Entity
     ///
     public override void Attack()
     {
-        AttackServerRpc();
-    }
-
-    [ServerRpc]
-    private void AttackServerRpc()
-    {
         if (m_currentPickupItem != null)
         {
             m_currentPickupItem.Consume();
@@ -159,10 +139,8 @@ public partial class PlayerEntity : Entity
     /// <summary>
     /// Logic for handling item drop and pickup.
     /// </summary>
-    [ServerRpc]
-    public void TryPickupDropItemServerRpc()
+    public void TryPickupDropItem()
     {
-
         Physics2D.OverlapBox(transform.position, m_collider.bounds.size, 0, m_itemContactFilter, itemOverlapList);
 
         DropItem();
@@ -174,7 +152,7 @@ public partial class PlayerEntity : Entity
             {
                 if (itemOverlapList[0] != null)
                 {
-                    GrabItem();
+                    GrabItem(itemOverlapList[0].transform.root.GetComponent<PickupItem>());
                 }
 
                 break;
@@ -190,19 +168,16 @@ public partial class PlayerEntity : Entity
     /// Logic for grabbing an item. Grabs item if hand is empty.
     /// </summary>
     /// <param name="item">The item to be grabbed.</param>
-    private void GrabItem()
+    private void GrabItem(PickupItem item)
     {
         if (m_currentPickupItem == null)
         {
-            PickupItem item = itemOverlapList[0].transform.root.GetComponent<PickupItem>();
+            m_currentPickupItem = item;
 
             item.Collect(this);
-            item.transform.parent = transform;
+            item.transform.parent = m_hand.transform;
             item.transform.localRotation = Quaternion.identity;
             item.transform.localPosition = Vector3.zero;
-
-            print("Grabbing item");
-            m_currentPickupItem = item;
         }
     }
 
@@ -214,10 +189,11 @@ public partial class PlayerEntity : Entity
     {
         if (m_currentPickupItem != null)
         {
+            m_currentPickupItem = null;
+
             m_currentPickupItem.transform.parent = null;
             m_currentPickupItem.transform.position = transform.position;
             m_currentPickupItem.Drop();
-            m_currentPickupItem = null;
         }
     }
     #endregion

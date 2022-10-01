@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using MichaelWolfGames;
 using System.Collections.Generic;
-using Unity.Netcode;
 
 public partial class PlayerEntity : Entity
 {
@@ -60,17 +59,11 @@ public partial class PlayerEntity : Entity
     /// </summary>
     protected override void OnAwake()
     {
+        instance = this;
 
-        // Do not assign player input if this is not the owner.
-        if (!IsOwner)
-        {
-            return;
-        }
-        
         // Set up item contact filter
         m_itemContactFilter.useLayerMask = true;
         m_itemContactFilter.layerMask = m_itemMask.value;
-
 
         // Set up player input
         m_playerInput = GetComponent<PlayerInput>();
@@ -102,8 +95,6 @@ public partial class PlayerEntity : Entity
     /// </summary>
     void Update()
     {
-        if (!IsOwner) return;
-        
         HandlePlayerMovement();
         HandlePlayerShooting();
     }
@@ -274,7 +265,7 @@ public partial class PlayerEntity : Entity
     {
         if (context.started)
         {
-            TryPickupDropItemServerRpc();
+            TryPickupDropItem();
         }
     }
     #endregion
@@ -285,9 +276,6 @@ public partial class PlayerEntity : Entity
     /// </summary>
     private void FixedUpdate()
     {
-        // Do nut run if is not owner.
-        if (!IsOwner) return;
-
         // Get ground check
         m_isOnGround = IsOnGround();
 

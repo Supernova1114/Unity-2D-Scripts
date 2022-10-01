@@ -150,7 +150,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9166842444220326623
 Transform:
   m_ObjectHideFlags: 0
@@ -184,6 +184,7 @@ MonoBehaviour:
   teamNumber: 1
   maxHealth: 5
   hasKnockback: 1
+  invincibilityFrameTime: 0
   foot: {fileID: 9166842445469281805}
   m_footRadius: 0.45
   m_groundMask:

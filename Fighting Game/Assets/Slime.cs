@@ -30,7 +30,7 @@ public class Slime : Entity
     IEnumerator Jumping()
     {
         yield return null;
-        /*while (IsAlive())
+        while (IsAlive())
         {
             yield return new WaitForSeconds(jumpInterval + Random.Range(-0.5f, 0.5f));
 
@@ -44,7 +44,7 @@ public class Slime : Entity
 
                 m_rigidbody.velocity = jumpVector;
             }
-        }*/
+        }
     }
 
 

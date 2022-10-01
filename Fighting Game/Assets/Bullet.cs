@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
 
-public abstract class Bullet : NetworkBehaviour
+public abstract class Bullet : MonoBehaviour
 {
     [SerializeField] private int damage;
     [SerializeField] private float speed;
@@ -17,7 +16,8 @@ public abstract class Bullet : NetworkBehaviour
     /// <summary>
     /// Awake for Bullet
     /// </summary>
-    public override void OnNetworkSpawn()
+    /// 
+    private void Awake()
     {
         m_rigidbody = GetComponent<Rigidbody2D>();
         m_rigidbody.velocity = transform.right * speed;
@@ -28,8 +28,6 @@ public abstract class Bullet : NetworkBehaviour
         {
             Destroy(gameObject, timeAlive);
         }
-
-        base.OnNetworkSpawn();
     }
 
 
@@ -39,9 +37,6 @@ public abstract class Bullet : NetworkBehaviour
     /// <param name="collision">The collider of the object.</param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // If is not owner, do nothing
-        if (!IsOwner) return;
-            
         bool isHurtableEntity = collision.transform.root.TryGetComponent<Entity>(out var entity) && ownerEntity != entity && !ownerEntity.IsOnSameTeam(entity);
         // Try to get Entity class from top-most parent.
         if (isHurtableEntity)
