@@ -180,6 +180,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4554af07a73c73447918553c8fa03857, type: 3}
+--- !u!4 &549545877 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1456609031770488490, guid: 4554af07a73c73447918553c8fa03857, type: 3}
+  m_PrefabInstance: {fileID: 376493550}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &738496378
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -187,6 +192,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7944424578850868050, guid: 08fc51de590ced443bd65e0a3d25ed5f, type: 3}
+      propertyPath: m_Follow
+      value: 
+      objectReference: {fileID: 549545877}
     - target: {fileID: 7944424578850868051, guid: 08fc51de590ced443bd65e0a3d25ed5f, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -373,7 +382,7 @@ Transform:
   m_GameObject: {fileID: 1166458683}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.98, y: -4.93, z: 0}
-  m_LocalScale: {x: 32.173626, y: 1, z: 1}
+  m_LocalScale: {x: 41.3592, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

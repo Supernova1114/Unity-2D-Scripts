@@ -172,12 +172,12 @@ public partial class PlayerEntity : Entity
     {
         if (m_currentPickupItem == null)
         {
-            m_currentPickupItem = item;
-
             item.Collect(this);
             item.transform.parent = m_hand.transform;
             item.transform.localRotation = Quaternion.identity;
             item.transform.localPosition = Vector3.zero;
+
+            m_currentPickupItem = item;
         }
     }
 
@@ -189,11 +189,11 @@ public partial class PlayerEntity : Entity
     {
         if (m_currentPickupItem != null)
         {
-            m_currentPickupItem = null;
-
             m_currentPickupItem.transform.parent = null;
             m_currentPickupItem.transform.position = transform.position;
             m_currentPickupItem.Drop();
+            
+            m_currentPickupItem = null;
         }
     }
     #endregion
