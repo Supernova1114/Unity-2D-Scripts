@@ -691,7 +691,8 @@ MonoBehaviour:
   spawnPoints:
   - {fileID: 677914754}
   - {fileID: 1333750409}
-  scriptString: p0;t10;s0;t1;p1;s1;
+  scriptString: p0;t1;s0;t0.5;s0;t0.5;s0;t5;p1;s1;t0.5;s1;t0.5;s1;
+  runOnAwake: 1
 --- !u!4 &676194993
 Transform:
   m_ObjectHideFlags: 0
