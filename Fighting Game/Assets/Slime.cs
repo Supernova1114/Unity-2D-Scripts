@@ -6,12 +6,18 @@ using MichaelWolfGames;
 public class Slime : Entity
 {
     [Header("Slime Entity")]
-    [SerializeField] private float jumpForce;
+    [SerializeField] private float jumpVelocityY;
+    [SerializeField] private float airVelocityX;
+
     [SerializeField] private float jumpInterval;
     [SerializeField] private int jumpAngle;
+
     [SerializeField] private GameObject spriteObj;
     [SerializeField] private int attackDamage;
     [SerializeField] private float knockbackForce;
+
+    private bool isOnGround = false;
+    private float desiredDirection;
 
     /// <summary>
     /// OnAwake for the Slime
@@ -34,15 +40,13 @@ public class Slime : Entity
         {
             yield return new WaitForSeconds(jumpInterval + Random.Range(-0.5f, 0.5f));
 
-            if (IsOnGround())
+
+            if (isOnGround)
             {
-                float angleDeg = Mathf.Deg2Rad * jumpAngle;
-                float jumpDirection = Mathf.Sign((PlayerEntity.GetInstance().transform.position - transform.position).x);
-                Vector2 jumpVector = jumpForce * new Vector2(jumpDirection * Mathf.Cos(angleDeg), Mathf.Sin(angleDeg));
+                desiredDirection = Mathf.Sign((PlayerEntity.GetInstance().transform.position - transform.position).x);
 
-                Debug.DrawRay(transform.position, jumpVector, Color.red, 1f);
-
-                m_rigidbody.velocity = jumpVector;
+                Vector2 jumpVector = jumpVelocityY * transform.up;
+                m_rigidbody.velocity = jumpVector;      
             }
         }
     }
@@ -56,6 +60,11 @@ public class Slime : Entity
         OnAnimate();
     }
 
+
+    /// <summary>
+    /// Attack on collide
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Try to get Entity class from top-most parent.
@@ -100,7 +109,20 @@ public class Slime : Entity
     /// </summary>
     private void FixedUpdate()
     {
-        
+        isOnGround = IsOnGround();
+
+        float velocityX;
+
+        if (isOnGround)
+        {
+            velocityX = 0;
+        }
+        else
+        {
+            velocityX = desiredDirection * airVelocityX;
+        }
+
+        m_rigidbody.velocity = new Vector2(velocityX, m_rigidbody.velocity.y);
     }
 
 

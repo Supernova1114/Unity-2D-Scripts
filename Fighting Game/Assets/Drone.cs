@@ -11,7 +11,7 @@ public class Drone : Entity
     [SerializeField] private float targetOffset;
     [SerializeField] private Vector2 targetPosOffset;
 
-    [SerializeField] private Bullet bullet;
+    [SerializeField] private GameObject bullet;
     [SerializeField] private float attackInterval;
 
     [SerializeField] private GameObject spriteObj;
@@ -68,8 +68,7 @@ public class Drone : Entity
     /// </summary>
     public override void Attack()
     {
-        Bullet bulletScript = Instantiate(bullet, transform.position, spriteObj.transform.rotation);
-        bulletScript.SetOwner(this);
+        Instantiate(bullet, transform.position, spriteObj.transform.rotation).GetComponent<Bullet>().SetOwner(this);
     }
 
     protected override void OnDeath()

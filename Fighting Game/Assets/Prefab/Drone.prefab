@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7331208578205127012}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.085206, y: -0.7223075, z: -0.13446453}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -51,6 +51,7 @@ MonoBehaviour:
   teamNumber: 1
   maxHealth: 5
   hasKnockback: 0
+  invincibilityFrameTime: 0
   foot: {fileID: 0}
   m_footRadius: 0
   m_groundMask:
@@ -61,7 +62,7 @@ MonoBehaviour:
   rotationSmooth: 0.05
   targetOffset: 4
   targetPosOffset: {x: 0, y: 4}
-  bullet: {fileID: 5075024091655073193, guid: 01c1d9d78de14ab4994175b5eda4a328, type: 3}
+  bullet: {fileID: 4307532846296432359, guid: 01c1d9d78de14ab4994175b5eda4a328, type: 3}
   attackInterval: 2
   spriteObj: {fileID: 7331208579840499191}
 --- !u!50 &7331208578205127019
