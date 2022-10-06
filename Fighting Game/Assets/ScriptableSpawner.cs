@@ -11,7 +11,7 @@ using UnityEngine;
  * ex: p2;t1;s3;t1.1;s3;p0;t1;s5;
  */
 
-public class ScriptableMonsterSpawner : MonoBehaviour
+public class ScriptableSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject[] prefabList;
     [SerializeField] private Transform[] spawnPoints;
