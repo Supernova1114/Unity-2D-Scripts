@@ -37,13 +37,21 @@ public abstract class Bullet : MonoBehaviour
     /// <param name="collision">The collider of the object.</param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        bool isHurtableEntity = collision.transform.root.TryGetComponent<Entity>(out var entity) && ownerEntity != entity && !ownerEntity.IsOnSameTeam(entity);
-        // Try to get Entity class from top-most parent.
-        if (isHurtableEntity)
-        {
-            entity.HurtKnockback(damage, (entity.transform.position - transform.position).normalized * knockbackForce);
+        Entity entity = collision.transform.root.GetComponent<Entity>();
 
-            OnCollision(collision);
+        if (entity)
+        {
+            if (!ownerEntity.IsOnSameTeam(entity))
+            {
+                // Not on same team: damage
+                entity.HurtKnockback(damage, (entity.transform.position - transform.position).normalized * knockbackForce);
+                OnCollision(collision);
+            }
+            else
+            {
+                // Is on same team: do nothing
+                return;
+            }
         }
         else if (!collision.isTrigger)
         {

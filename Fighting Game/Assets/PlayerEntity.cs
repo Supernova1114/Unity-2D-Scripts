@@ -21,7 +21,7 @@ public partial class PlayerEntity : Entity
 
     protected override void OnDeath()
     {
-        print("Bleh");
+        Destroy(gameObject, 0);
     }
 
     protected override void OnHeal()

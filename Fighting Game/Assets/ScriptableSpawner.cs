@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 /*
  * Scripting language for ScriptableMonsterSpawner.
@@ -18,6 +19,7 @@ public class ScriptableSpawner : MonoBehaviour
 
     [SerializeField] private string scriptString;
     [SerializeField] private bool runOnAwake;
+    [SerializeField] UnityEvent OnCompleted;
 
     private int currentSpawnPointIndex = 0;
 
@@ -96,6 +98,7 @@ public class ScriptableSpawner : MonoBehaviour
             }
         }
 
+        OnCompleted.Invoke();
         yield return null;
     }
 

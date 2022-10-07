@@ -15,6 +15,7 @@ public class Slime : Entity
     [SerializeField] private int attackDamage;
     [SerializeField] private float knockbackForce;
 
+    private PlayerEntity playerInstance;
     private bool isOnGround = false;
     private float desiredDirection;
 
@@ -26,6 +27,10 @@ public class Slime : Entity
         StartCoroutine(Jumping());
     }
 
+    private void Start()
+    {
+        playerInstance = PlayerEntity.GetInstance();
+    }
 
     /// <summary>
     /// Coroutine for entity behaviour.
@@ -42,7 +47,15 @@ public class Slime : Entity
 
             if (isOnGround)
             {
-                desiredDirection = Mathf.Sign((PlayerEntity.GetInstance().transform.position - transform.position).x);
+                if (playerInstance)
+                {
+                    desiredDirection = Mathf.Sign((playerInstance.transform.position - transform.position).x);
+                }
+                else
+                {
+                    desiredDirection = Random.Range(1, -1) == 0? -1 : 1;
+                    print(desiredDirection);
+                }
 
                 Vector2 jumpVector = jumpVelocityY * transform.up;
                 m_rigidbody.velocity = jumpVector;      

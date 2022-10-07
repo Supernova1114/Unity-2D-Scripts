@@ -19,10 +19,16 @@ public class Drone : Entity
     private Vector2 currentVelocity;
     Vector2 targetDir;
 
+    PlayerEntity playerInstance;
 
     protected override void OnAwake()
     {
         StartCoroutine(AttackCoroutine());
+    }
+
+    private void Start()
+    {
+        playerInstance = PlayerEntity.GetInstance();
     }
 
     /// <summary>
@@ -57,9 +63,16 @@ public class Drone : Entity
     /// </summary>
     private void FixedUpdate()
     {
-        targetDir = PlayerEntity.GetInstance().transform.position - transform.position;
-        Vector2 targetPos = Vector2.SmoothDamp(m_rigidbody.velocity, (targetDir - (targetDir.normalized * targetOffset) + targetPosOffset) * moveSpeed, ref currentVelocity, movementSmooth);
-        m_rigidbody.velocity = targetPos;
+        if (playerInstance)
+        {
+            targetDir = playerInstance.transform.position - transform.position;
+            Vector2 targetPos = Vector2.SmoothDamp(m_rigidbody.velocity, (targetDir - (targetDir.normalized * targetOffset) + targetPosOffset) * moveSpeed, ref currentVelocity, movementSmooth);
+            m_rigidbody.velocity = targetPos;
+        }
+        else
+        {
+            m_rigidbody.velocity = Vector2.zero;
+        }
     }
 
 
