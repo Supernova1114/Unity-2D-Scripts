@@ -672,7 +672,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &676194992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -691,9 +691,9 @@ MonoBehaviour:
   spawnPoints:
   - {fileID: 677914754}
   - {fileID: 1333750409}
-  scriptString: p0;t1;s0;t0.5;s0;t0.5;s0;t5;p1;s1;t0.5;s1;t0.5;s1;s1;s1;s1;s1;s1;s1;s1;
+  scriptString: p0;t1;s0;t0.5;s0;t0.5;s0;t5;p1;s1;t0.5;s1;t0.5;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;s1;
   runOnAwake: 1
-  OnFinish:
+  OnCompleted:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &676194993
@@ -995,6 +995,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1456609031770488487, guid: 4554af07a73c73447918553c8fa03857, type: 3}
+      propertyPath: m_wallCheckOffset.y
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 1456609031770488490, guid: 4554af07a73c73447918553c8fa03857, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -1039,6 +1043,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1456609031770488492, guid: 4554af07a73c73447918553c8fa03857, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 8ffa72d7233ff5e4886dedc90c64597d, type: 2}
     - target: {fileID: 1456609031770488494, guid: 4554af07a73c73447918553c8fa03857, type: 3}
       propertyPath: m_Name
       value: Player
@@ -1651,10 +1659,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 18240840185635457, guid: 31da6665c7e17a545b68d4c550cd8128, type: 3}
-      propertyPath: near clip plane
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 18240840185635458, guid: 31da6665c7e17a545b68d4c550cd8128, type: 3}
       propertyPath: m_Name
       value: Main Camera
@@ -1716,7 +1720,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Default_Coin
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1986717265269477261, guid: 7bf8bca054d259449b9d95af871fcd34, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7bf8bca054d259449b9d95af871fcd34, type: 3}
 --- !u!1001 &2947924779609288990
 PrefabInstance:

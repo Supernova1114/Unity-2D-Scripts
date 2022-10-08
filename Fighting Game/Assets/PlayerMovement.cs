@@ -27,7 +27,16 @@ public partial class PlayerEntity : Entity
     [SerializeField] private Vector2 m_wallCheckOffset;
     [SerializeField] private Vector2 m_handSize;
 
-    private Collider2D[] wallContactList = new Collider2D[1]; 
+    [Header("Ground Check")]
+    [SerializeField] private GameObject foot;
+    [SerializeField] private float m_footRadius; // Radius of the ground check
+    [SerializeField] protected LayerMask m_groundMask;
+
+    private Collider2D[] wallContactList = new Collider2D[5];
+    private RaycastHit2D[] m_groundContactList = new RaycastHit2D[5];
+    private int groundResultsCount;
+
+    private ContactFilter2D groundContactFilter = new ContactFilter2D();
 
     private PlayerInput m_playerInput;
     private InputAction m_moveAction;
@@ -63,7 +72,11 @@ public partial class PlayerEntity : Entity
 
         // Set up item contact filter
         m_itemContactFilter.useLayerMask = true;
-        m_itemContactFilter.layerMask = m_itemMask.value;
+        m_itemContactFilter.layerMask = m_itemMask;
+
+        // Set up ground contact filter
+        groundContactFilter.useLayerMask = true;
+        groundContactFilter.layerMask = m_groundMask;
 
         // Set up player input
         m_playerInput = GetComponent<PlayerInput>();
@@ -277,7 +290,9 @@ public partial class PlayerEntity : Entity
     private void FixedUpdate()
     {
         // Get ground check
-        m_isOnGround = IsOnGround();
+        m_isOnGround = IsOnGround(out groundResultsCount);
+
+        
 
         // Handle gravity scale for player.
         if (m_rigidbody.velocity.y < 0)
@@ -310,7 +325,7 @@ public partial class PlayerEntity : Entity
     {
         if (m_isSliding)
         {
-            if (m_slideTimer < m_maxSlideTime)
+            if (m_slideTimer < m_maxSlideTime && !m_jump)
             {
                 // Normal sliding
                 Vector2 targetSlideVelocity = new Vector2((transform.right * m_slideSpeed * m_facingDirection).x, m_rigidbody.velocity.y);
@@ -382,7 +397,10 @@ public partial class PlayerEntity : Entity
         {
             m_rigidbody.velocity = Vector2.zero;
         }
-    } 
+    }
+
+
+    
 
 
     /// <summary>
@@ -392,6 +410,8 @@ public partial class PlayerEntity : Entity
     {
         Vector2 targetVelocity;
         float moveSmoothing;
+        float avgGroundAngle = 0;
+
 
         if (m_enableHorizontalMovement)
         {
@@ -408,24 +428,47 @@ public partial class PlayerEntity : Entity
         if (m_isOnGround)
         {
             moveSmoothing = m_MovementSmoothing;
+
+            // Calculate move velocity slope angle
+            for (int i = 0; i < groundResultsCount; i++)
+            {
+                float angle = Vector2.SignedAngle(transform.up, m_groundContactList[i].normal);
+                if (Mathf.Abs(angle) < 45)
+                {
+                    avgGroundAngle += angle;
+                }
+            }
+
+            avgGroundAngle /= groundResultsCount;
+
         }
         else
         {
             moveSmoothing = m_AirMoveSmoothing;
+
+            avgGroundAngle = 0;
         }
-        
-        m_rigidbody.velocity = Vector2.SmoothDamp(m_rigidbody.velocity, targetVelocity, ref m_smoothingVelocity, moveSmoothing);
+
+        // ToDo - Fix velocity slope movement.
+        print(avgGroundAngle + " " + Vector2.SignedAngle(transform.up, Quaternion.Euler(0, 0, avgGroundAngle) * targetVelocity));
+
+        m_rigidbody.velocity = Quaternion.Euler(0, 0, avgGroundAngle) * Vector2.SmoothDamp(m_rigidbody.velocity, targetVelocity, ref m_smoothingVelocity, moveSmoothing);
+    }
+
+
+    private bool IsOnGround(out int results)
+    {
+        // Check if touching ground
+        results = Physics2D.CircleCast(foot.transform.position, m_footRadius, -transform.up, groundContactFilter, m_groundContactList, 0);
+        return results > 0;
     }
 
 
     private bool IsOnWall()
     {
-        // Clear list
-        wallContactList[0] = null;
-
         // Add check for kinematic or not rigidbody?
-        Physics2D.OverlapBox(transform.position + (m_facingDirection * m_wallCheckOffset.x * transform.right) + (m_wallCheckOffset.y * transform.up), m_handSize, 0, m_groundContactFilter, wallContactList);
-        return wallContactList[0];
+        int results = Physics2D.OverlapBox(transform.position + (m_facingDirection * m_wallCheckOffset.x * transform.right) + (m_wallCheckOffset.y * transform.up), m_handSize, 0, groundContactFilter, wallContactList);
+        return results > 0;
     }
 
 

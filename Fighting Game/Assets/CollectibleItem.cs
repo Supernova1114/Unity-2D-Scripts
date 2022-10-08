@@ -14,8 +14,6 @@ public abstract class CollectibleItem : MonoBehaviour
     public void Collect(Entity owner)
     {
         ownerEntity = owner;
-        gameObject.GetComponent<Collider2D>().enabled = false;
-
         OnCollect();
     }
 

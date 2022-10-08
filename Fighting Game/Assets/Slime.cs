@@ -121,7 +121,7 @@ public class Slime : Entity
     /// </summary>
     private void FixedUpdate()
     {
-        isOnGround = IsOnGround();
+        //isOnGround = IsOnGround();
 
         float velocityX;
 
@@ -137,6 +137,13 @@ public class Slime : Entity
         m_rigidbody.velocity = new Vector2(velocityX, m_rigidbody.velocity.y);
     }
 
+    /*private bool IsOnGround()
+    {
+        // Check if touching ground
+        Physics2D.OverlapCircle(foot.transform.position, m_footRadius, -transform.up, groundContactFilter, m_groundContactList, 0);
+
+        return m_groundContactList.Length > 0;
+    }*/
 
     protected override void OnDeath()
     {

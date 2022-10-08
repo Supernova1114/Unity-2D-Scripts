@@ -8,15 +8,7 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] private int maxHealth;
     [SerializeField] private bool hasKnockback = true;
     [SerializeField] private float invincibilityFrameTime;
-
-    [Header("Ground Check")]
-    [SerializeField] private GameObject foot;
-    [SerializeField] private float m_footRadius; // Radius of the ground check
-    [SerializeField] protected LayerMask m_groundMask;
     
-
-    protected ContactFilter2D m_groundContactFilter = new ContactFilter2D();
-    private Collider2D[] m_groundContactList = new Collider2D[1];
 
     private int health;
 
@@ -36,7 +28,6 @@ public abstract class Entity : MonoBehaviour
         m_rigidbody = GetComponent<Rigidbody2D>();
         m_collider = GetComponent<Collider2D>();
 
-        InitGroundContactFilter();
         OnAwake();
     }
 
@@ -134,29 +125,7 @@ public abstract class Entity : MonoBehaviour
         OnHeal();
     }
     
-
-    protected virtual void InitGroundContactFilter()
-    {
-        // Set up ground contact filter
-        m_groundContactFilter.useTriggers = false;
-        m_groundContactFilter.useLayerMask = true;
-        m_groundContactFilter.layerMask = m_groundMask.value;
-    }
-
-
-    public bool IsOnGround()
-    {
-        // Ground Check
-        // Acceptable ground is not a trigger, on ground layer mask (Default), and does not this entity's rigidbody.
-
-        // Clear ground contact list
-        m_groundContactList[0] = null;
-
-        // Check if touching ground
-        Physics2D.OverlapCircle(foot.transform.position, m_footRadius, m_groundContactFilter, m_groundContactList);
-
-        return m_groundContactList[0] != null;
-    }
+    
 
 
     public bool IsOnSameTeam(Entity otherEntity)
