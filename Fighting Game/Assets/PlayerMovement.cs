@@ -55,12 +55,17 @@ public partial class PlayerEntity : Entity
     private bool m_isOnGround; // Is the player on the ground?
     private bool m_jump = false; // Flag for jumping.
     private bool m_jumpHeld = false; // Detects if the jump button is held or not
+    private bool m_isJumping = false; // If the player is jumping (from jump begin, to touch ground again).
+    private bool m_wasJumping = false;
     private bool m_isSliding;
     private float m_slideTimer;
     private bool m_enableHorizontalMovement = true;
 
     private float m_minJumpOffset;
     private bool m_canBeginSlide = true;
+
+    private bool m_isWallClimbing = false;
+
 
 
     /// <summary>
@@ -301,6 +306,7 @@ public partial class PlayerEntity : Entity
         }
         else
         {
+            if (m_isJumping)
             m_rigidbody.gravityScale = 1f;
         }
 
@@ -357,6 +363,8 @@ public partial class PlayerEntity : Entity
                 m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_initialJumpVelocity);
                 m_remainJumping = true;
 
+                m_wasJumping = true;
+
                 if (canWallJump)
                 {
                     m_rigidbody.velocity += (Vector2)(-m_facingDirection * m_initialJumpVelocity * transform.right);
@@ -387,6 +395,23 @@ public partial class PlayerEntity : Entity
             }
         }
         
+
+        // Handle setting isJumping
+        if (m_wasJumping)
+        {
+            if (!m_isOnGround && !m_isWallClimbing)
+            {
+                m_isJumping = true;
+            }
+            else if (m_isJumping)
+            {
+                m_isJumping = false;
+                m_wasJumping = false;
+            }
+        }
+
+        print(m_isJumping);
+
         m_jump = false;
     }
 
@@ -395,7 +420,12 @@ public partial class PlayerEntity : Entity
     {
         if (!m_isOnGround && Mathf.Abs(m_movementInput.x) > 0 && m_rigidbody.velocity.y < 0 && IsOnWall())
         {
+            m_isWallClimbing = true;
             m_rigidbody.velocity = Vector2.zero;
+        }
+        else
+        {
+            m_isWallClimbing = false;
         }
     }
 
@@ -410,8 +440,6 @@ public partial class PlayerEntity : Entity
     {
         Vector2 targetVelocity;
         float moveSmoothing;
-        float avgGroundAngle = 0;
-
 
         if (m_enableHorizontalMovement)
         {
@@ -428,31 +456,13 @@ public partial class PlayerEntity : Entity
         if (m_isOnGround)
         {
             moveSmoothing = m_MovementSmoothing;
-
-            // Calculate move velocity slope angle
-            for (int i = 0; i < groundResultsCount; i++)
-            {
-                float angle = Vector2.SignedAngle(transform.up, m_groundContactList[i].normal);
-                if (Mathf.Abs(angle) < 45)
-                {
-                    avgGroundAngle += angle;
-                }
-            }
-
-            avgGroundAngle /= groundResultsCount;
-
         }
         else
         {
             moveSmoothing = m_AirMoveSmoothing;
-
-            avgGroundAngle = 0;
         }
 
-        // ToDo - Fix velocity slope movement.
-        print(avgGroundAngle + " " + Vector2.SignedAngle(transform.up, Quaternion.Euler(0, 0, avgGroundAngle) * targetVelocity));
-
-        m_rigidbody.velocity = Quaternion.Euler(0, 0, avgGroundAngle) * Vector2.SmoothDamp(m_rigidbody.velocity, targetVelocity, ref m_smoothingVelocity, moveSmoothing);
+        m_rigidbody.velocity = Vector2.SmoothDamp(m_rigidbody.velocity, targetVelocity, ref m_smoothingVelocity, moveSmoothing);
     }
 
 
