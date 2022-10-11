@@ -48,7 +48,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackInterval: 0.1
-  maxAmmo: 100
+  maxAmmo: 0
+  infiniteAmmo: 1
   bullet: {fileID: 5075024091655073193, guid: 01c1d9d78de14ab4994175b5eda4a328, type: 3}
 --- !u!61 &2947924778190324891
 BoxCollider2D:

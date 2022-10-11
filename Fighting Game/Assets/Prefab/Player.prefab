@@ -293,7 +293,7 @@ MonoBehaviour:
   m_slideMovementSmoothing: 0.05
   m_maxSlideTime: 0.5
   m_slideCooldown: 0.5
-  m_wallCheckOffset: {x: 0.5, y: 0.5}
+  m_wallCheckOffset: {x: 0.5, y: 0.3}
   m_handSize: {x: 0.2, y: 0.5}
   foot: {fileID: 1456609030300652937}
   m_footRadius: 0.45
@@ -408,7 +408,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 8ffa72d7233ff5e4886dedc90c64597d, type: 2}
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
