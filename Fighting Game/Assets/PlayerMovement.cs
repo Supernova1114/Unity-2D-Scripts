@@ -15,6 +15,7 @@ public partial class PlayerEntity : Entity
     [SerializeField] private float m_maxJumpTime; // Max time the player can jump
     [SerializeField] private float m_minJumpTime; // Min time the player can jump
     [SerializeField] private float m_initialJumpVelocity; // The initial jump velocity
+    [SerializeField] private float m_gravityScale;
     [SerializeField] private float m_fallGravityScale; // Current fall velocity multiplied by a value
 
     [Header("Sliding")]
@@ -441,18 +442,41 @@ public partial class PlayerEntity : Entity
         Vector2 targetVelocity;
         float moveSmoothing;
 
+        // TODO - Put the variables at top of file
+        Vector2 groundNormal = Vector2.zero;
+        Vector2 groundTangent = Vector2.zero;
+
         if (m_enableHorizontalMovement)
         {
             float rawXInput = (m_movementInput.x != 0 ? Mathf.Sign(m_movementInput.x) : 0);
 
-            // Left and right movement
-            targetVelocity = new Vector2(rawXInput * m_moveSpeed, m_rigidbody.velocity.y);
+            // Handle horizontal and slope movement
+            if (m_groundContactList[0])
+            {
+                groundNormal = m_groundContactList[0].normal;
+                groundTangent = new Vector2(-groundNormal.y, groundNormal.x);
+                
+                if (Vector2.Angle(Vector2.up, groundTangent) > 0)
+                {
+                    targetVelocity = -groundTangent.normalized * rawXInput * m_moveSpeed;
+                }
+                else
+                {
+                    targetVelocity = new Vector2(rawXInput * m_moveSpeed, m_rigidbody.velocity.y);
+                }
+            }
+            else
+            {
+                targetVelocity = new Vector2(rawXInput * m_moveSpeed, m_rigidbody.velocity.y);
+            }
+
         }
         else
         {
             targetVelocity = new Vector2(0, m_rigidbody.velocity.y);
         }
 
+        // Handle movement smoothing rigidbody friction
         if (m_isOnGround)
         {
             moveSmoothing = m_MovementSmoothing;
@@ -462,8 +486,13 @@ public partial class PlayerEntity : Entity
             moveSmoothing = m_AirMoveSmoothing;
         }
 
-        m_rigidbody.velocity = Vector2.SmoothDamp(m_rigidbody.velocity, targetVelocity, ref m_smoothingVelocity, moveSmoothing);
+        //Vector2 smoothedDesiredVelocity = Vector2.SmoothDamp(m_rigidbody.velocity, targetVelocity, ref m_smoothingVelocity, moveSmoothing);
+        Vector2 smoothedDesiredVelocity = targetVelocity;
+        m_rigidbody.velocity = smoothedDesiredVelocity;
+
+        m_rigidbody.AddForce(Vector2.up * m_gravityScale);
     }
+
 
 
     private bool IsOnGround(out int results)
