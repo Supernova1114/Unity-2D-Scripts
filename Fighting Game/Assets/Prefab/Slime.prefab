@@ -185,6 +185,11 @@ MonoBehaviour:
   maxHealth: 5
   hasKnockback: 1
   invincibilityFrameTime: 0.1
+  foot: {fileID: 9166842445469281805}
+  m_footRadius: 0.45
+  m_groundMask:
+    serializedVersion: 2
+    m_Bits: 1
   jumpVelocityY: 7
   airVelocityX: 7
   jumpInterval: 1
@@ -208,7 +213,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 2
-  m_Material: {fileID: 6200000, guid: ee0ed00e5045e814aaeb5691d5d100a6, type: 2}
+  m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
@@ -222,7 +227,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 9166842444220326625}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 8ffa72d7233ff5e4886dedc90c64597d, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
