@@ -186,8 +186,8 @@ MonoBehaviour:
   hasKnockback: 1
   invincibilityFrameTime: 0.1
   foot: {fileID: 9166842445469281805}
-  m_footRadius: 0.45
-  m_groundMask:
+  footRadius: 0.45
+  groundMask:
     serializedVersion: 2
     m_Bits: 1
   jumpVelocityY: 7

@@ -16,8 +16,8 @@ public class Slime : Entity
     [SerializeField] private float knockbackForce;
 
     private PlayerEntity playerInstance;
-    private bool isOnGround = false;
     private float desiredDirection;
+    private bool isOnGround = false;
 
     /// <summary>
     /// OnAwake for the Slime
@@ -39,7 +39,6 @@ public class Slime : Entity
     /// <returns></returns>
     IEnumerator Jumping()
     {
-        yield return null;
         while (IsAlive())
         {
             yield return new WaitForSeconds(jumpInterval + Random.Range(-0.5f, 0.5f));
@@ -61,6 +60,8 @@ public class Slime : Entity
                 m_rigidbody.velocity = jumpVector;      
             }
         }
+
+        yield return null;
     }
 
 
@@ -121,9 +122,9 @@ public class Slime : Entity
     /// </summary>
     private void FixedUpdate()
     {
-        //isOnGround = IsOnGround();
-
         float velocityX;
+
+        isOnGround = IsOnGround();
 
         if (isOnGround)
         {
@@ -136,14 +137,6 @@ public class Slime : Entity
 
         m_rigidbody.velocity = new Vector2(velocityX, m_rigidbody.velocity.y);
     }
-
-    /*private bool IsOnGround()
-    {
-        // Check if touching ground
-        Physics2D.OverlapCircle(foot.transform.position, m_footRadius, -transform.up, groundContactFilter, m_groundContactList, 0);
-
-        return m_groundContactList.Length > 0;
-    }*/
 
     protected override void OnDeath()
     {

@@ -27,16 +27,8 @@ public partial class PlayerEntity : Entity
     [SerializeField] private Vector2 m_wallCheckOffset;
     [SerializeField] private Vector2 m_handSize;
 
-    [Header("Ground Check")]
-    [SerializeField] private GameObject foot;
-    [SerializeField] private float m_footRadius; // Radius of the ground check
-    [SerializeField] protected LayerMask m_groundMask;
-
+    private RaycastHit2D[] groundHitList = new RaycastHit2D[5];
     private Collider2D[] wallContactList = new Collider2D[5];
-    private RaycastHit2D[] m_groundContactList = new RaycastHit2D[5];
-    private int groundResultsCount;
-
-    private ContactFilter2D groundContactFilter = new ContactFilter2D();
 
     private PlayerInput m_playerInput;
     private InputAction m_moveAction;
@@ -78,10 +70,6 @@ public partial class PlayerEntity : Entity
         // Set up item contact filter
         m_itemContactFilter.useLayerMask = true;
         m_itemContactFilter.layerMask = m_itemMask;
-
-        // Set up ground contact filter
-        groundContactFilter.useLayerMask = true;
-        groundContactFilter.layerMask = m_groundMask;
 
         // Set up player input
         m_playerInput = GetComponent<PlayerInput>();
@@ -295,7 +283,7 @@ public partial class PlayerEntity : Entity
     private void FixedUpdate()
     {
         // Get ground check
-        m_isOnGround = IsOnGround(out groundResultsCount);
+        m_isOnGround = IsOnGround();
 
         
 
@@ -410,7 +398,6 @@ public partial class PlayerEntity : Entity
             }
         }
 
-        print(m_isJumping);
 
         m_jump = false;
     }
@@ -430,9 +417,6 @@ public partial class PlayerEntity : Entity
     }
 
 
-    
-
-
     /// <summary>
     /// Logic for handling left and right movement.
     /// </summary>
@@ -440,13 +424,36 @@ public partial class PlayerEntity : Entity
     {
         Vector2 targetVelocity;
         float moveSmoothing;
+        Vector2 groundNormal = Vector2.zero;
 
         if (m_enableHorizontalMovement)
         {
             float rawXInput = (m_movementInput.x != 0 ? Mathf.Sign(m_movementInput.x) : 0);
 
             // Left and right movement
-            targetVelocity = new Vector2(rawXInput * m_moveSpeed, m_rigidbody.velocity.y);
+            if (m_isOnGround)
+            {
+                groundNormal = groundHitList[0].normal;
+                Vector2 groundTangent = -Vector2.Perpendicular(groundHitList[0].normal);
+                float groundAngle = Mathf.Abs(Vector2.SignedAngle(Vector2.right, groundTangent));
+
+                print(Physics2D.gravity);
+
+                if (groundAngle > 0 && groundAngle < 45)
+                {
+                    targetVelocity = groundTangent * rawXInput * m_moveSpeed;
+                    Debug.DrawRay(transform.position, targetVelocity);
+                }
+                else
+                {
+                    targetVelocity = new Vector2(rawXInput * m_moveSpeed, m_rigidbody.velocity.y);
+                }
+
+            }
+            else
+            {
+                targetVelocity = new Vector2(rawXInput * m_moveSpeed, m_rigidbody.velocity.y);
+            }
         }
         else
         {
@@ -463,13 +470,13 @@ public partial class PlayerEntity : Entity
         }
 
         m_rigidbody.velocity = Vector2.SmoothDamp(m_rigidbody.velocity, targetVelocity, ref m_smoothingVelocity, moveSmoothing);
+        //m_rigidbody.AddForce(-groundNormal * Physics2D.gravity * m_rigidbody.gravityScale);
     }
 
-
-    private bool IsOnGround(out int results)
+    protected override bool IsOnGround()
     {
         // Check if touching ground
-        results = Physics2D.CircleCast(foot.transform.position, m_footRadius, -transform.up, groundContactFilter, m_groundContactList, 0);
+        int results = Physics2D.CircleCast(foot.transform.position, footRadius, -transform.up, groundContactFilter, groundHitList, 0);
         return results > 0;
     }
 

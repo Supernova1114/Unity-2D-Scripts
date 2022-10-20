@@ -421,6 +421,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1801018736225679844, guid: 0001d2363d0743540945513e32567d38, type: 3}
+      propertyPath: runOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1801018736225679844, guid: 0001d2363d0743540945513e32567d38, type: 3}
+      propertyPath: scriptString
+      value: p1;t1;s0;
+      objectReference: {fileID: 0}
+    - target: {fileID: 1801018736225679844, guid: 0001d2363d0743540945513e32567d38, type: 3}
+      propertyPath: prefabList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1801018736225679844, guid: 0001d2363d0743540945513e32567d38, type: 3}
+      propertyPath: prefabList.Array.data[0]
+      value: 
+      objectReference: {fileID: 9166842444220326625, guid: e99e3a2a0b130d64fbdfd8fb43d0ea3c, type: 3}
     - target: {fileID: 1801018736225679845, guid: 0001d2363d0743540945513e32567d38, type: 3}
       propertyPath: m_RootOrder
       value: 13
@@ -468,6 +484,10 @@ PrefabInstance:
     - target: {fileID: 1801018736225679867, guid: 0001d2363d0743540945513e32567d38, type: 3}
       propertyPath: m_Name
       value: Monster Spawner (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1801018736225679867, guid: 0001d2363d0743540945513e32567d38, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1801018736227400662, guid: 0001d2363d0743540945513e32567d38, type: 3}
       propertyPath: m_LocalPosition.x
@@ -618,6 +638,10 @@ PrefabInstance:
     - target: {fileID: 1801018736225679867, guid: 0001d2363d0743540945513e32567d38, type: 3}
       propertyPath: m_Name
       value: Monster Spawner
+      objectReference: {fileID: 0}
+    - target: {fileID: 1801018736225679867, guid: 0001d2363d0743540945513e32567d38, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1801018736227400662, guid: 0001d2363d0743540945513e32567d38, type: 3}
       propertyPath: m_LocalPosition.x
