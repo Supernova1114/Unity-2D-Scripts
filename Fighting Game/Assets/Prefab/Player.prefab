@@ -290,6 +290,7 @@ MonoBehaviour:
   m_moveSpeed: 10
   m_MovementSmoothing: 0.1
   m_AirMoveSmoothing: 0.2
+  m_maxSlopeLimit: 45
   m_maxJumpTime: 2
   m_minJumpTime: 0.5
   m_initialJumpVelocity: 14

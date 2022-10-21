@@ -10,6 +10,7 @@ public partial class PlayerEntity : Entity
     [SerializeField] private float m_moveSpeed; // Left and Right movement speed of player
     [SerializeField] private float m_MovementSmoothing; // Player movement smoothing
     [SerializeField] private float m_AirMoveSmoothing; // Player movement smoothing in air
+    [SerializeField] private float m_maxSlopeLimit; // Max slope angle the player can walk on
 
     [Header("Jumping")]
     [SerializeField] private float m_maxJumpTime; // Max time the player can jump
@@ -27,8 +28,8 @@ public partial class PlayerEntity : Entity
     [SerializeField] private Vector2 m_wallCheckOffset;
     [SerializeField] private Vector2 m_handSize;
 
-    private RaycastHit2D[] groundHitList = new RaycastHit2D[5];
-    private Collider2D[] wallContactList = new Collider2D[5];
+    private RaycastHit2D[] m_groundHitList = new RaycastHit2D[5];
+    private Collider2D[] m_wallContactList = new Collider2D[5];
 
     private PlayerInput m_playerInput;
     private InputAction m_moveAction;
@@ -433,16 +434,24 @@ public partial class PlayerEntity : Entity
             // Left and right movement
             if (m_isOnGround)
             {
-                groundNormal = groundHitList[0].normal;
-                Vector2 groundTangent = -Vector2.Perpendicular(groundHitList[0].normal);
+                groundNormal = m_groundHitList[0].normal;
+                Vector2 groundTangent = -Vector2.Perpendicular(m_groundHitList[0].normal);
                 float groundAngle = Mathf.Abs(Vector2.SignedAngle(Vector2.right, groundTangent));
 
                 print(Physics2D.gravity);
 
-                if (groundAngle > 0 && groundAngle < 45)
+                if (groundAngle > 0 && groundAngle <= m_maxSlopeLimit)
                 {
                     targetVelocity = groundTangent * rawXInput * m_moveSpeed;
                     Debug.DrawRay(transform.position, targetVelocity);
+
+                    if (!m_isJumping && m_movementInput.x == 0)
+                    {
+                        // TODO - make jump not move player, make weird small jump not happen
+                        Vector2 newGravity = (-Physics2D.gravity.normalized + -groundNormal) * Physics2D.gravity.magnitude * m_rigidbody.gravityScale;
+                        Debug.DrawRay(transform.position, newGravity, Color.red);
+                        m_rigidbody.AddForce(newGravity);
+                    }
                 }
                 else
                 {
@@ -470,13 +479,16 @@ public partial class PlayerEntity : Entity
         }
 
         m_rigidbody.velocity = Vector2.SmoothDamp(m_rigidbody.velocity, targetVelocity, ref m_smoothingVelocity, moveSmoothing);
-        //m_rigidbody.AddForce(-groundNormal * Physics2D.gravity * m_rigidbody.gravityScale);
+
+        
+            
     }
+
 
     protected override bool IsOnGround()
     {
         // Check if touching ground
-        int results = Physics2D.CircleCast(foot.transform.position, footRadius, -transform.up, groundContactFilter, groundHitList, 0);
+        int results = Physics2D.CircleCast(foot.transform.position, footRadius, -transform.up, groundContactFilter, m_groundHitList, 0);
         return results > 0;
     }
 
@@ -484,7 +496,7 @@ public partial class PlayerEntity : Entity
     private bool IsOnWall()
     {
         // Add check for kinematic or not rigidbody?
-        int results = Physics2D.OverlapBox(transform.position + (m_facingDirection * m_wallCheckOffset.x * transform.right) + (m_wallCheckOffset.y * transform.up), m_handSize, 0, groundContactFilter, wallContactList);
+        int results = Physics2D.OverlapBox(transform.position + (m_facingDirection * m_wallCheckOffset.x * transform.right) + (m_wallCheckOffset.y * transform.up), m_handSize, 0, groundContactFilter, m_wallContactList);
         return results > 0;
     }
 
