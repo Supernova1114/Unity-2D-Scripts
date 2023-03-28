@@ -15,6 +15,7 @@ public partial class PlayerEntity : Entity
     [Header("Jumping")]
     [SerializeField] private float m_maxJumpTime; // Max time the player can jump
     [SerializeField] private float m_minJumpTime; // Min time the player can jump
+    [SerializeField] private float m_jumpPeakTime; // 
     [SerializeField] private float m_initialJumpVelocity; // The initial jump velocity
     [SerializeField] private float m_fallGravityScale; // Current fall velocity multiplied by a value
 
@@ -94,6 +95,8 @@ public partial class PlayerEntity : Entity
         m_aimLockAction.canceled += OnAimLock;
 
         m_itemPickupDropAction.started += OnItemPickupDrop;
+
+        m_jumpTimer = m_maxJumpTime;
     }
 
 
@@ -143,8 +146,6 @@ public partial class PlayerEntity : Entity
     {
         m_jump = true;
         m_jumpHeld = true;
-
-        m_minJumpOffset = 0f;
     }
 
 
@@ -154,15 +155,6 @@ public partial class PlayerEntity : Entity
     private void OnJumpCanceled()
     {
         m_jumpHeld = false;
-
-        if (m_remainJumping)
-        {
-            if (m_rigidbody.velocity.y > 0)
-            {
-                m_minJumpOffset = m_minJumpTime;
-            }
-        }
-
     }
     #endregion
 
@@ -286,19 +278,6 @@ public partial class PlayerEntity : Entity
         // Get ground check
         m_isOnGround = IsOnGround();
 
-        
-
-        // Handle gravity scale for player.
-        if (m_rigidbody.velocity.y < 0)
-        {
-            m_rigidbody.gravityScale = m_fallGravityScale;
-        }
-        else
-        {
-            if (m_isJumping)
-            m_rigidbody.gravityScale = 1f;
-        }
-
         // Player Direction
         if (!m_isSliding && Mathf.Abs(m_movementInput.x) > 0)
         {
@@ -342,7 +321,40 @@ public partial class PlayerEntity : Entity
     /// </summary>
     private void HandleJump()
     {
-        // Initial Jump
+        print(m_jumpTimer);
+        if (m_jump && m_isOnGround)
+        {
+            m_jumpTimer = 0;
+            m_remainJumping = true;
+        }
+
+        // CHeck if jumphelp ! then m_remainJumping = false;
+        if (m_remainJumping)
+        {
+            if (m_jumpTimer < m_minJumpTime)
+            {
+                // Minimum jump time
+                m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_initialJumpVelocity);
+                m_jumpTimer += Time.fixedDeltaTime;
+            }
+            else if (m_jumpHeld && m_jumpTimer < m_maxJumpTime)
+            {
+                // Maximum jump time
+                m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_initialJumpVelocity);
+                m_jumpTimer += Time.fixedDeltaTime;
+            }
+            else
+            {
+                m_remainJumping = false;
+            }
+        }
+        
+        /*// Peak jump
+        if (m_jumpTimer < m_jumpPeakTime)
+        {
+            m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_initialJumpVelocity);
+        }*/
+
         if (m_jump)
         {
             bool canWallJump = IsOnWall() && !m_isOnGround;
@@ -356,34 +368,17 @@ public partial class PlayerEntity : Entity
 
                 if (canWallJump)
                 {
+                    // Give velocity for wall jump
                     m_rigidbody.velocity += (Vector2)(-m_facingDirection * m_initialJumpVelocity * transform.right);
+                    
+                    // Make player face opposite direction after leaving wall.
+                    m_facingDirection = -m_facingDirection;
                 }
             }
             
         }
 
-        // Remain Jumping
-        if (m_remainJumping)
-        {
-            if (m_jumpTimer <= m_maxJumpTime && m_rigidbody.velocity.y >= 0)
-            {
-                m_jumpTimer += Time.fixedDeltaTime;
-
-                if (m_maxJumpTime > 0)
-                {
-                    float jumpVelFactor = 1 - Mathf.Clamp01((m_jumpTimer / m_maxJumpTime) + m_minJumpOffset);
-
-                    m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_rigidbody.velocity.y * jumpVelFactor);
-                }
-
-            }
-            else
-            {
-                m_remainJumping = false;
-                m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, 0);
-            }
-        }
-        
+        m_jump = false;
 
         // Handle setting isJumping
         if (m_wasJumping)
@@ -399,8 +394,6 @@ public partial class PlayerEntity : Entity
             }
         }
 
-
-        m_jump = false;
     }
 
 
@@ -417,6 +410,11 @@ public partial class PlayerEntity : Entity
         }
     }
 
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(foot.transform.position, footRadius);
+    }
 
     /// <summary>
     /// Logic for handling left and right movement.
@@ -438,14 +436,14 @@ public partial class PlayerEntity : Entity
                 Vector2 groundTangent = -Vector2.Perpendicular(m_groundHitList[0].normal);
                 float groundAngle = Mathf.Abs(Vector2.SignedAngle(Vector2.right, groundTangent));
 
-                print(Physics2D.gravity);
 
                 if (groundAngle > 0 && groundAngle <= m_maxSlopeLimit)
                 {
+                    // Handle slope movement
                     targetVelocity = groundTangent * rawXInput * m_moveSpeed;
                     Debug.DrawRay(transform.position, targetVelocity);
 
-                    if (!m_isJumping && m_movementInput.x == 0)
+                    if (!m_jump && !m_isJumping && m_movementInput.x == 0)
                     {
                         // TODO - make jump not move player, make weird small jump not happen
                         Vector2 newGravity = (-Physics2D.gravity.normalized + -groundNormal) * Physics2D.gravity.magnitude * m_rigidbody.gravityScale;
@@ -455,6 +453,7 @@ public partial class PlayerEntity : Entity
                 }
                 else
                 {
+                    // Default non-slope movement
                     targetVelocity = new Vector2(rawXInput * m_moveSpeed, m_rigidbody.velocity.y);
                 }
 
@@ -463,9 +462,12 @@ public partial class PlayerEntity : Entity
             {
                 targetVelocity = new Vector2(rawXInput * m_moveSpeed, m_rigidbody.velocity.y);
             }
+            //targetVelocity = new Vector2(rawXInput * m_moveSpeed, m_rigidbody.velocity.y);
+
         }
         else
         {
+            // No horizontal movement
             targetVelocity = new Vector2(0, m_rigidbody.velocity.y);
         }
 
