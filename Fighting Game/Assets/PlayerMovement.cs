@@ -17,7 +17,8 @@ public partial class PlayerEntity : Entity
     [SerializeField] private float m_minJumpTime; // Min time the player can jump
     [SerializeField] private float m_jumpPeakTime; // 
     [SerializeField] private float m_initialJumpVelocity; // The initial jump velocity
-    [SerializeField] private float m_fallGravityScale; // Current fall velocity multiplied by a value
+    [SerializeField] private float m_jumpGravityScale; // Current jump gravity scale multiplied by a value
+    [SerializeField] private float m_fallGravityScale; // Current fall gravity scale multiplied by a value
 
     [Header("Sliding")]
     [SerializeField] private float m_slideSpeed;
@@ -321,14 +322,13 @@ public partial class PlayerEntity : Entity
     /// </summary>
     private void HandleJump()
     {
-        print(m_jumpTimer);
         if (m_jump && m_isOnGround)
         {
             m_jumpTimer = 0;
             m_remainJumping = true;
         }
 
-        // CHeck if jumphelp ! then m_remainJumping = false;
+        // Remain jumping until jump is not held
         if (m_remainJumping)
         {
             if (m_jumpTimer < m_minJumpTime)
@@ -392,6 +392,15 @@ public partial class PlayerEntity : Entity
                 m_isJumping = false;
                 m_wasJumping = false;
             }
+        }
+
+        if (m_remainJumping)
+        {
+            m_rigidbody.gravityScale = m_jumpGravityScale;
+        }
+        else
+        {
+            m_rigidbody.gravityScale = m_fallGravityScale;
         }
 
     }
